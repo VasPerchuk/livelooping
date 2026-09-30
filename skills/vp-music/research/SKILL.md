@@ -13,19 +13,29 @@ description: >-
 
 Read `skills\vp-music\CONTRACT.md` and the `vp-music-research` role. First confirm
 artist, title and recording/arrangement (live versions may have different bars).
-Reuse the song's existing folder and assets without overwriting unrelated files.
+Find existing song folders including spelling variants, inventory their source
+assets, and reuse their files without overwriting unrelated material. If no
+authoritative assets are present, ask once for user uploads (notes, GP, PDF,
+explicit chord/tab text, MIDI). Wait for offered uploads; if none are possible,
+create/reuse `songs\<artist_slug>-<song_slug>` and proceed with explicit gaps.
+Select the tracking or legacy artifact paths according to the contract.
 
-Search independently for chord progression, BPM/beat unit, key, meter, section order
-and bars, track lineup, tuning, capo, characteristic effects and production facts
-that change a live arrangement. Rank transcription evidence by identifiable artist/
-recording, specific track/measure detail, community corrections and corroboration;
-a high rating alone does not establish correctness. Cross-check likely differences
-against existing GP/MIDI metadata and another source where available. Distinguish
-reported fact, arrangement-specific transcription and hypothesis. Record URLs beside
-claims, not a disconnected list of links.
+Verify identity and performance-relevant context against independent web sources.
+For musical details (chords, BPM/beat unit, key, meter, sections/bars, tracks,
+tuning, capo), inspect validated GP first; next use provided PDFs, explicit
+chord/tab text, then MIDI, only for gaps or an approved comparison. A high
+rating alone does not establish correctness. Distinguish reported fact, score-
+specific transcription and hypothesis; record URLs beside web claims and local
+file/measure evidence beside score claims. If GP already answers all required
+musical questions, **pause** after web context verification and ask whether to
+inspect the next tier for corroboration or proceed to the normal analysis
+approval gate. This source decision never authorizes analysis by itself.
+When consulting PDFs use existing PDF capability only; if notation cannot be
+read reliably, mark it unverified rather than inventing notes.
 
-Search for both usable Guitar Pro and MIDI from authorized sources whose access
-and download terms permit the intended use. Keep already present files. For each
+Search for a missing usable score from authorized sources whose access
+and download terms permit the intended use; do not fetch lower-tier assets merely
+to populate every format. Keep already present files. For each
 direct download, use `python skills\vp-music\scripts\download_asset.py --url
 <https-url> --song-dir <song-folder> --name <new-filename>`: it bounds streamed
 bytes, checks redirects, stages in the song folder, invokes
@@ -39,7 +49,8 @@ Log the asset origin, SHA-256, validator result and whether it has playable note
 content. If the helper is unavailable, explain the blocker and leave downloaded
 assets unaccepted rather than claim they are validated.
 
-Create `research.md` following `research\references\report-template.md` with
+Create `.vp-music-tracking\research\research.md` (or legacy root `research.md`)
+following `research\references\report-template.md` with
 `## Song identity`, `## Verified musical facts`,
 `## Arrangement and track evidence`, `## Effects and useful trivia`,
 `## Assets and validation`, `## Conflicts and gaps`, and `## Preparation progress`.
@@ -51,5 +62,7 @@ bass guitar merely because the MIDI program says "bass", research might show tha
 
 Stop at research completion, state whether analysis is supported by validated
 score material, and show up to three numbered next actions, including analysis
-only with explicit approval. If a site cannot be accessed, state this rather than
+only with explicit approval. If GP was sufficient, let the user choose lower-
+tier comparison or analysis approval explicitly; the research progress record
+must reflect the choice. If a site cannot be accessed, state this rather than
 inventing chords or an asset.

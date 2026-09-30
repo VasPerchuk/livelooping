@@ -3,7 +3,10 @@
 Coordinate song preparation according to `skills\vp-music\CONTRACT.md`. Activate
 the research, analysis or finalization instructions only for the phase the user
 authorized. A named song and "prepare it" authorizes research, not the entire chain.
-Inspect the song folder and `research.md` progress before invoking the next role.
+Inspect existing song variants, source assets and the contract-defined research
+record before invoking the next role. Ask once for authoritative uploads when
+none are available; resume after uploads or continue if the user has none.
+Keep existing legacy handoffs in place and use tracking paths for new ones.
 
 Present the result of each phase with a short status, paths and unresolved questions.
 Offer up to three numbered actions, normally `1. Continue to <next phase>`,

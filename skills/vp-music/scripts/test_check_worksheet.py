@@ -6,6 +6,80 @@ from check_worksheet import check
 
 
 class WorksheetCheckTest(unittest.TestCase):
+    def test_tracking_draft_and_published_final_with_transitions(self):
+        with tempfile.TemporaryDirectory() as directory:
+            song = Path(directory)
+            tracking = song / ".vp-music-tracking"
+            (tracking / "pattern").mkdir(parents=True)
+            (tracking / "draft").mkdir()
+            (tracking / "pattern" / "drums.patterns.md").write_text(
+                "## Pattern: Drums A\n", encoding="utf-8"
+            )
+            content = (
+                "# Test\n**Status: Draft**\n**Tempo:** quarter = 120 BPM\n"
+                "**Meter:** 4/4\n## Patterns (1 total)\n- **Drums A** (1 bar)\n"
+                "## Structure\n### Intro - 4 bars (~8 seconds)\n"
+                "Patterns: Drums A\nTransition: Stop the drums on beat 1.\n"
+            )
+            (tracking / "draft" / "worksheet-draft.md").write_text(
+                content, encoding="utf-8"
+            )
+            self.assertEqual(check(song), [])
+            self.assertFalse((song / "worksheet.md").exists())
+            (song / "worksheet.md").write_text(
+                content.replace("Status: Draft", "Status: Final"), encoding="utf-8"
+            )
+            self.assertEqual(check(song, require_final=True), [])
+            (tracking / "draft" / "worksheet-draft.md").unlink()
+            self.assertTrue(
+                any("no tracking draft" in e for e in check(song, require_final=True))
+            )
+
+    def test_tracking_final_requires_transition_and_warning_if_infeasible(self):
+        with tempfile.TemporaryDirectory() as directory:
+            song = Path(directory)
+            (song / ".vp-music-tracking" / "pattern").mkdir(parents=True)
+            (song / ".vp-music-tracking" / "draft").mkdir()
+            (song / ".vp-music-tracking" / "draft" / "worksheet-draft.md").write_text(
+                "# Working draft\n**Status: Draft**\n", encoding="utf-8"
+            )
+            (song / ".vp-music-tracking" / "pattern" / "drums.patterns.md").write_text(
+                "## Pattern: Drums A\n", encoding="utf-8"
+            )
+            sheet = (
+                "# Test\n**Status: Final**\n**Tempo:** 120 BPM\n**Meter:** 4/4\n"
+                "## Patterns (1 total)\n- **Drums A**\n## Structure\n"
+                "### Intro - 4 bars (~8 seconds)\nPatterns: Drums A\n"
+            )
+            (song / "worksheet.md").write_text(sheet, encoding="utf-8")
+            self.assertTrue(any("Transition" in e for e in check(song, True)))
+            (song / "worksheet.md").write_text(
+                sheet + "Transition: INFEASIBLE - two pedals need pressing at once.\n",
+                encoding="utf-8",
+            )
+            self.assertTrue(any("final warning" in e for e in check(song, True)))
+            (song / "worksheet.md").write_text(
+                sheet.replace("## Patterns", "**Transition warning:** Two pedals cannot be pressed together.\n\n## Patterns")
+                + "Transition: INFEASIBLE - two pedals need pressing at once.\n",
+                encoding="utf-8",
+            )
+            self.assertEqual(check(song, True), [])
+
+    def test_tracking_rejects_legacy_pattern_mix(self):
+        with tempfile.TemporaryDirectory() as directory:
+            song = Path(directory)
+            (song / ".vp-music-tracking" / "pattern").mkdir(parents=True)
+            (song / ".vp-music-tracking" / "draft").mkdir()
+            (song / "drums.patterns.md").write_text("## Pattern: Drums A\n", encoding="utf-8")
+            (song / ".vp-music-tracking" / "draft" / "worksheet-draft.md").write_text(
+                "# Test\n**Status: Draft**\n## Patterns (0 total)\n"
+                "## Structure\n### Break - 1 bar (~2 seconds)\n"
+                "Patterns: none\nTransition: Stop.\n", encoding="utf-8"
+            )
+            self.assertTrue(any("both legacy and tracking" in e for e in check(song)))
+            (song / "research.md").write_text("# Legacy report\n", encoding="utf-8")
+            self.assertTrue(any("research locations" in e for e in check(song)))
+
     def test_compound_meter_timing_and_pattern_references(self):
         with tempfile.TemporaryDirectory() as directory:
             song = Path(directory)

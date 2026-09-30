@@ -1,6 +1,6 @@
 ---
 name: vp-music-research
-description: Research chords, song facts and validated MIDI/Guitar Pro sources for a named live-looping song, producing cited research.md and initial chords.md. Use for the research phase or explicit research requests, not to finalize a worksheet.
+description: Research chords and song facts from GP-first evidence with optional PDF/text/MIDI comparison for a named live-looping song, producing an internal cited research record and root chords.md. Ask for missing assets and pause when GP is sufficient. Use for the research phase or explicit research requests.
 ---
 
 Read `skills\vp-music\CONTRACT.md` and

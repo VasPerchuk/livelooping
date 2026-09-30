@@ -4,34 +4,55 @@
     {
       "id": 1,
       "prompt": "Prep The White Stripes - Seven Nation Army for my Maschine 3/Mikro MK3 and RC-300 live set. Use the GP3 and MIDI already in white_stripes-seven_nation_army; I have not approved moving beyond research yet.",
-      "expected_output": "Cited research and a sourced initial chords.md, local assets validated without overwriting them, followed by a research-to-analysis approval menu. No draft worksheet or pattern files yet.",
+      "expected_output": "Cited internal research and a sourced root chords.md, GP3 validated without overwriting it, then a choice to compare lower-tier MIDI if needed or separately approve analysis. No draft worksheet or pattern files yet.",
       "files": [],
       "expectations": [
         "Research stops before analysis and presents numbered next actions.",
-        "Existing GP3 and MIDI are validated without deleting or overwriting them.",
+        "Existing GP3 and MIDI are inventoried and validated without deleting or overwriting them; MIDI content is not analyzed if GP is sufficient without approval.",
         "Full website lyrics are not copied into chords.md."
       ]
     },
     {
       "id": 2,
       "prompt": "Continue the analysis of a prepared song with researched guitar and bass but only a verified MIDI drum track. Make the instrumental pattern files and a worksheet draft, not a finished worksheet. I will decide whether to finalize.",
-      "expected_output": "Only supported drum material is tabulated with labeled ASCII grid; missing guitar/bass notes are explicit, worksheet is Draft and finalization waits for approval.",
+      "expected_output": "Only supported drum material is tabulated with labeled ASCII grid; missing guitar/bass notes are explicit, internal worksheet draft and pattern files are written, finalization waits for approval.",
       "files": [],
       "expectations": [
         "Missing scored instruments are flagged rather than given invented notes or frets.",
         "There are no vocal or non-repeating solo patterns.",
-        "The worksheet remains marked Draft and handoff waits for approval."
+        "The tracking worksheet-draft.md remains marked Draft, no root worksheet.md is published, and handoff waits for approval."
       ]
     },
     {
       "id": 3,
       "prompt": "I approved finalization of a draft song with 6/8 bars at dotted-quarter 80 BPM, two reusable guitar patterns and one drum pattern. Produce chords.md with guitar fingerings and a compact instrumental worksheet; I did not give you a lyric license.",
-      "expected_output": "Accurate compound-meter timing, three named instrumental patterns, chord voicings with tuning/capo qualification, no full internet lyrics, and an evidence-supported final worksheet.",
+      "expected_output": "Accurate compound-meter timing, three named instrumental patterns, chord voicings with tuning/capo qualification, no full internet lyrics, and a concise root final worksheet with explicit section transitions.",
       "files": [],
       "expectations": [
         "The 6/8 timing treats dotted-quarter 80 BPM as two beats per bar.",
         "The final worksheet references exactly three named instrumental patterns.",
-        "Unlicensed website lyrics are not reproduced."
+        "Unlicensed website lyrics are not reproduced.",
+        "Every final section has a short feasible Transition line or an INFEASIBLE cue and a conspicuous warning."
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Start preparing a new song folder with no score or notes in it. I can upload a GP file if that helps; don't guess the tabs or move ahead without me.",
+      "expected_output": "Research asks for the offered GP upload before source analysis, does not fabricate musical claims, and does not publish a worksheet.",
+      "files": [],
+      "expectations": [
+        "One intake question requests the offered authoritative file and pauses for upload.",
+        "No instrument patterns or published worksheet are invented."
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "The score is fully sufficient; arrange a live transition where both RC-300 tracks would need separate pedals pressed on the same beat, and finalize my approved worksheet.",
+      "expected_output": "A concise final worksheet explicitly marks the unachievable transition and a prominent warning, while the internal draft documents a one-action scene or staged-mute alternative.",
+      "files": [],
+      "expectations": [
+        "The final section is marked INFEASIBLE with a Transition warning rather than presenting impossible controls as playable.",
+        "The detailed alternative and caveats stay in the internal draft."
       ]
     }
   ]

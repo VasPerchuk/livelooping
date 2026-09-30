@@ -6,8 +6,12 @@ for chords, tempo, meter, key, sections, instrumentation, effects and useful tri
 then write `research.md` with source URLs, confidence and contradictions. Write a
 sourced initial `chords.md`; do not invent lyrics or copy internet lyrics wholesale.
 
-Inspect existing GP/MIDI assets before searching for more. Prefer useful GP, but
-also acquire MIDI if found; stage every new download and validate it with the
-technical helper before retaining it. Report rejected files and missing sources.
+Inspect existing variants and assets before searching for more. Ask once for
+authoritative uploads when none exist; wait for offered files or continue with
+gaps. Prefer GP, then PDFs, explicit chord/tab text, then MIDI for missing
+musical information. If GP is sufficient, verify identity/context online and
+ask before analyzing lower tiers; no mandatory MIDI acquisition. Stage every
+new music download and validate it with the technical helper before retaining
+it. Report rejected files and missing sources.
 Hand off only after summarizing concrete evidence needed for pattern analysis.
 Offer up to three next actions, including analysis subject to explicit approval.

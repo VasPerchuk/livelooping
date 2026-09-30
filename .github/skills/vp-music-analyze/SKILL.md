@@ -1,6 +1,6 @@
 ---
 name: vp-music-analyze
-description: Analyze a researched song's validated MIDI/Guitar Pro for reusable instrumental live-loop patterns and make ASCII pattern files plus a draft worksheet. Use for the explicitly authorized analysis phase.
+description: Analyze validated Guitar Pro or MIDI for reusable instrumental live-loop patterns and write internal ASCII pattern files and a draft worksheet, identifying unnamed MIDI tracks cautiously. Use for the explicitly authorized analysis phase.
 ---
 
 Read `skills\vp-music\CONTRACT.md`,

@@ -8,14 +8,27 @@ import sys
 
 def check(song_dir, require_final=False):
     folder = Path(song_dir)
-    sheet = (folder / "worksheet.md").read_text(encoding="utf-8")
+    tracking = folder / ".vp-music-tracking"
+    new_layout = tracking.is_dir()
+    draft = tracking / "draft" / "worksheet-draft.md"
+    sheet_path = folder / "worksheet.md"
+    if new_layout and not require_final:
+        sheet_path = draft
+    sheet = sheet_path.read_text(encoding="utf-8")
     errors = []
+    if new_layout and require_final and not draft.is_file():
+        errors.append("published worksheet has no tracking draft")
+    if new_layout and (folder / "research.md").exists():
+        errors.append("both legacy and tracking research locations exist; choose one handoff")
     if require_final and not re.search(r"\*\*Status:\s*Final\*\*", sheet, re.I):
         errors.append("worksheet is not marked Final")
     if not re.search(r"\*\*Status:\s*(Draft|Final)\*\*", sheet, re.I):
         errors.append("worksheet has no Draft/Final status")
     names = {}
-    for path in folder.glob("*.patterns.md"):
+    pattern_dir = tracking / "pattern" if new_layout else folder
+    if new_layout and list(folder.glob("*.patterns.md")):
+        errors.append("both legacy and tracking pattern files exist; choose one handoff")
+    for path in pattern_dir.glob("*.patterns.md"):
         text = path.read_text(encoding="utf-8")
         for name in re.findall(r"(?m)^## Pattern:\s*(.+?)\s*$", text):
             if name in names:
@@ -47,6 +60,14 @@ def check(song_dir, require_final=False):
         errors.append("final worksheet needs explicit BPM and time signature")
     for heading, body in sections:
         label = heading.strip()
+        if new_layout:
+            transition = re.search(r"(?mi)^Transition:\s*(.+?)\s*$", body)
+            if not transition:
+                errors.append(f"section lacks Transition line: {label}")
+            elif re.search(r"\bINFEASIBLE\b", transition[1], re.I) and not re.search(
+                r"(?mi)^\*\*Transition warning:\*\*\s*\S+", sheet
+            ) and require_final:
+                errors.append(f"infeasible transition lacks final warning: {label}")
         timing = re.search(r"(?:-|—)\s*(\d+)\s+bars?\s*\(\s*~?\s*(\d+(?:\.\d+)?)\s*(?:seconds|s)\b", label, re.I)
         if not timing:
             errors.append(f"section lacks bar count and approximate seconds: {label}")

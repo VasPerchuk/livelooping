@@ -50,11 +50,33 @@ class DefinitionsTest(unittest.TestCase):
             self.assertRegex(content, re.compile(r"\bapproval\b", re.IGNORECASE))
         self.assertIn("**Status: Draft**", (MUSIC / "analyze" / "SKILL.md").read_text(encoding="utf-8"))
 
+    def test_layout_source_gate_and_transitions_are_defined(self):
+        contract = (MUSIC / "CONTRACT.md").read_text(encoding="utf-8")
+        research = (MUSIC / "research" / "SKILL.md").read_text(encoding="utf-8")
+        analyze = (MUSIC / "analyze" / "SKILL.md").read_text(encoding="utf-8")
+        final = (MUSIC / "finalize" / "SKILL.md").read_text(encoding="utf-8")
+        worksheet = (MUSIC / "performance-worksheet" / "SKILL.md").read_text(encoding="utf-8")
+        for path in (
+            r".vp-music-tracking\research\research.md",
+            r".vp-music-tracking\pattern\<instrument>.patterns.md",
+            r".vp-music-tracking\draft\worksheet-draft.md",
+        ):
+            self.assertIn(path, contract)
+        self.assertIn("ask once", research)
+        self.assertIn("PDF", research)
+        self.assertIn("MIDI", research)
+        self.assertIn("pause", research.lower())
+        self.assertIn(r"draft\worksheet-draft.md", analyze)
+        self.assertIn(r"draft\worksheet-draft.md", final)
+        self.assertIn("Transition:", worksheet)
+        self.assertIn("INFEASIBLE", worksheet)
+        self.assertTrue((MUSIC / "analyze" / "references" / "midi-pitches.md").is_file())
+
     def test_eval_set_covers_all_three_phases(self):
         data = json.loads((MUSIC / "prepare" / "evals" / "evals.json").read_text(encoding="utf-8"))
         self.assertEqual(data["skill_name"], "vp-music-prepare")
-        self.assertEqual(len(data["evals"]), 3)
-        self.assertEqual(len({item["id"] for item in data["evals"]}), 3)
+        self.assertEqual(len(data["evals"]), 5)
+        self.assertEqual(len({item["id"] for item in data["evals"]}), 5)
         for item in data["evals"]:
             self.assertTrue(item["prompt"] and item["expected_output"])
             self.assertTrue(item["expectations"])

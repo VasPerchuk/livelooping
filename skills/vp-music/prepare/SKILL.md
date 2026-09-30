@@ -22,8 +22,13 @@ At each phase, read its role and skill instructions:
 | Finalize | `roles\vp-music-finalize.md` | `finalize\SKILL.md` |
 
 Resolve paths relative to the `skills\vp-music` folder, not the terminal's current
-directory. On a new song, perform research and stop; on resume, read progress in
-the song's `research.md`. Numbered next actions (`1`, `2`, `3`) only apply to the
+directory. Before delegating research, check existing song-name variants and
+inventory source assets. If none are present, ask once whether the user can
+provide notes, GP, PDF, text or MIDI; wait for promised uploads, or continue
+with stated gaps if none are available. Determine legacy versus tracking layout
+as defined in the contract. On a new song, perform research and stop; on resume,
+read progress in the active research record (tracking `research\research.md`
+or legacy root `research.md`). Numbered next actions (`1`, `2`, `3`) only apply to the
 last menu presented for this song, and free-text feedback takes precedence. Do
 not let a background agent cross a user approval boundary. Keep research facts,
 pattern tabs and worksheet cues in their separate files.

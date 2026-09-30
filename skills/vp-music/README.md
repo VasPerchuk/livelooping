@@ -10,10 +10,27 @@ The `performance-worksheet\` skill replaces the former single-pass worksheet.
 Start in the `livelooping` directory with `vp-music-prepare` and give an artist
 and song title. A new preparation stops after research; explicitly approve
 analysis and later finalization. You can invoke a single specialist directly
-for just its phase. The song folder holds `research.md`, `chords.md`, the draft
-then final `worksheet.md`, individual `<instrument>.patterns.md`, and any
-validated GP/MIDI. The agent reports gaps and pauses rather than fabricating
+for just its phase. The agent reports gaps and pauses rather than fabricating
 instrument parts or full internet lyrics.
+
+For **new** preparations, existing song variants and supplied assets are
+checked first. If no authoritative files are available, the researcher asks
+once for notes, GP, PDFs, text tabs/chords or MIDI, then proceeds with stated
+gaps if you have none. Research verifies identity/context online and ranks
+musical evidence GP > user-provided PDF > explicit chord/tab text > MIDI.
+When GP is sufficient, choose whether to compare lower-tier sources or move
+to the separate analysis approval gate. Existing PDF-reading capability may
+be used for an approved comparison; there is no dedicated PDF score parser.
+
+The user-facing `chords.md` exists from research; a concise `worksheet.md` is
+published only at finalization. Workflow files for new preparations live under
+`.vp-music-tracking\`: `research\research.md`,
+`pattern\<instrument>.patterns.md`, `draft\worksheet-draft.md`. The draft
+retains assumptions; the final shows section bars/times, active patterns and
+a short human `Transition:` action per block. Any impossible simultaneous
+actions receive an explicit `INFEASIBLE` section cue and final warning.
+Existing prepared song folders retain their root-level workflow files without
+automatic migration. Source assets stay in the song root.
 
 ## Copilot CLI activation
 
@@ -70,9 +87,12 @@ files use `tools\music_assets.py validate --path <file>` or `inspect` with the
 same `--path` option; `duration` emits bar seconds.
 `scripts\pattern_candidates.py --path <file>` proposes exact repeated phrases
 for the analyzer to review, rather than asserting sections automatically.
-`scripts\check_worksheet.py --song-dir <folder> --require-final` checks that
-the final worksheet's patterns exist and its steady-tempo section durations
-match the header. Read their `--help` for details. Existing examples include
+`scripts\check_worksheet.py --song-dir <folder>` checks a tracking draft
+(or legacy root draft); add `--require-final` to check the published root
+worksheet, including per-section transition lines in the new layout. It also
+checks pattern references and steady-tempo durations. Read `--help` for
+details. `analyze\references\midi-pitches.md` documents provisional MIDI
+instrument/drum identification. Existing examples include
 GP3/4/5, GPX, ZIP-based modern GP and MIDI; the validator fails explicitly on
 unsupported formats. It does not determine whether a transcription matches the
 recording.
