@@ -45,10 +45,9 @@ Create `research.md` following `research\references\report-template.md` with
 `## Assets and validation`, `## Conflicts and gaps`, and `## Preparation progress`.
 List evidence/URL/confidence for each meaningful claim and indicate which tracks
 and sections still need investigation. Create initial `chords.md` with key/tempo,
-section-wise chord progression and source URLs. Do not copy an entire website's
-lyrics or tab into it; only use full lyrics if supplied by the user or appropriately
-licensed, otherwise link the source. Do not assume a repeating guitar riff is a
-bass guitar merely because the MIDI program says "bass."
+section-wise chord progression and source URLs. Ask user before copying an entire website's
+lyrics or tab into it; otherwise use full lyrics if supplied by the user, otherwise link the source. Do not assume a repeating guitar riff is a
+bass guitar merely because the MIDI program says "bass", research might show that it is played on a different instrument.
 
 Stop at research completion, state whether analysis is supported by validated
 score material, and show up to three numbered next actions, including analysis

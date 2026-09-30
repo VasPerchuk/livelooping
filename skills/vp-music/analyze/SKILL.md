@@ -46,7 +46,7 @@ not a proof that an uploaded transcription matches the recording.
    of a *format*, not a song transcription:
 
    ```text
-   Count |1 & 2 & 3 & 4 &|1 & 2 & 3 & 4 &|
+   Count |1 & 2 & 3 & 4 & |1 & 2 & 3 & 4 & |
    Kick  |x---x---x---x---|x---x---x---x---|
    Snare |----x-------x---|----x-------x---|
    ```
