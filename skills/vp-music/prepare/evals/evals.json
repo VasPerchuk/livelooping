@@ -1,0 +1,38 @@
+{
+  "skill_name": "vp-music-prepare",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Prep The White Stripes - Seven Nation Army for my Maschine 3/Mikro MK3 and RC-300 live set. Use the GP3 and MIDI already in white_stripes-seven_nation_army; I have not approved moving beyond research yet.",
+      "expected_output": "Cited research and a sourced initial chords.md, local assets validated without overwriting them, followed by a research-to-analysis approval menu. No draft worksheet or pattern files yet.",
+      "files": [],
+      "expectations": [
+        "Research stops before analysis and presents numbered next actions.",
+        "Existing GP3 and MIDI are validated without deleting or overwriting them.",
+        "Full website lyrics are not copied into chords.md."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Continue the analysis of a prepared song with researched guitar and bass but only a verified MIDI drum track. Make the instrumental pattern files and a worksheet draft, not a finished worksheet. I will decide whether to finalize.",
+      "expected_output": "Only supported drum material is tabulated with labeled ASCII grid; missing guitar/bass notes are explicit, worksheet is Draft and finalization waits for approval.",
+      "files": [],
+      "expectations": [
+        "Missing scored instruments are flagged rather than given invented notes or frets.",
+        "There are no vocal or non-repeating solo patterns.",
+        "The worksheet remains marked Draft and handoff waits for approval."
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "I approved finalization of a draft song with 6/8 bars at dotted-quarter 80 BPM, two reusable guitar patterns and one drum pattern. Produce chords.md with guitar fingerings and a compact instrumental worksheet; I did not give you a lyric license.",
+      "expected_output": "Accurate compound-meter timing, three named instrumental patterns, chord voicings with tuning/capo qualification, no full internet lyrics, and an evidence-supported final worksheet.",
+      "files": [],
+      "expectations": [
+        "The 6/8 timing treats dotted-quarter 80 BPM as two beats per bar.",
+        "The final worksheet references exactly three named instrumental patterns.",
+        "Unlicensed website lyrics are not reproduced."
+      ]
+    }
+  ]
+}

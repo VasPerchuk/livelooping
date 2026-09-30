@@ -1,0 +1,7 @@
+{
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@coderline/alphatab": "1.8.4"
+  }
+}
