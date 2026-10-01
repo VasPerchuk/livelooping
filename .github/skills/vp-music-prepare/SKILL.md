@@ -1,6 +1,6 @@
 ---
 name: vp-music-prepare
-description: Prepare a named song for a live-looping performance through researched chords and validated Guitar Pro/MIDI, repeatable instrument pattern analysis and a final worksheet. Use when the user asks to prep or arrange a song for live looping; pause for approval at the research and analysis handoffs.
+description: Prepare a named song through recording-free research, hardware-neutral loop analysis, and questionnaire-driven finalization into a setup-compatible worksheet and arrangement.gp. Use when asked to prep or arrange a song; pause at research and analysis handoffs.
 ---
 
 Read `skills\vp-music\CONTRACT.md` and

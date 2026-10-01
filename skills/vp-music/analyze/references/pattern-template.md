@@ -17,3 +17,13 @@ Lane  |--x-------x-----|
 
 **Entry/end cue:** <start on downbeat; stop/retrigger at next section>
 **Limitations:** <unscored parts, MIDI pitch-only, uncertain rhythm, etc.>
+
+The ASCII grid is a concise performance aid, not a complete GP-ready score.
+Keep it independent of personal performance hardware/software and controller
+allocation.
+If a scored instrumental reduction is supported, record its complete original
+note onsets, durations and evidenced pitches/string/frets with the same pattern
+name in `.vp-music-tracking\arrangement\arrangement.json` following
+`analyze\references\arrangement-handoff.md`. Leave the arrangement blocked
+when the missing events cannot be justified; do not fill them by guessing
+from this grid.

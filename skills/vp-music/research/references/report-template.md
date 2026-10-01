@@ -17,7 +17,7 @@
 | Intro | unknown | | |
 
 ## Effects and useful trivia
-- <Only facts with a performance consequence; separate a suggested substitute>
+- <Source facts with a performance consequence; do not prescribe the user's setup>
 
 ## Assets and validation
 | File | Origin URL or pre-existing | SHA-256 | Format/status | Notes |
@@ -31,3 +31,8 @@
 - Completed phase: research
 - Open questions: <...>
 - Next phase if authorized: analysis
+
+Do not record personal performance hardware/software here. If a streaming
+catalog was necessary for identity metadata, cite it and state the exact
+metadata-only purpose. Never record an acquired original recording as a
+research deliverable.

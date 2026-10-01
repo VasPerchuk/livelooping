@@ -1,6 +1,6 @@
 ---
 name: vp-music-research
-description: Research chords and song facts from GP-first evidence with optional PDF/text/MIDI comparison for a named live-looping song, producing an internal cited research record and root chords.md. Ask for missing assets and pause when GP is sufficient. Use for the research phase or explicit research requests.
+description: Research chords and song facts from GP-first evidence without acquiring the original recording, producing an internal cited record and root chords.md. Use streaming services only for necessary identity metadata; ask for missing score assets and pause when GP is sufficient.
 ---
 
 Read `skills\vp-music\CONTRACT.md` and

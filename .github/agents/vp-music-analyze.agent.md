@@ -1,6 +1,6 @@
 ---
 name: vp-music-analyze
-description: Analyze validated song files into repeatable instrumental patterns with ASCII notation and a draft looping worksheet.
+description: Analyze validated song files into hardware-neutral repeatable instrumental patterns, scored reduction events and a draft looping worksheet.
 ---
 
 Read and follow `skills\vp-music\CONTRACT.md`,

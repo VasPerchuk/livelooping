@@ -16,3 +16,6 @@ Wait for an answer before crossing a phase boundary. Record progress in `researc
 without recording approval that has not been given. On revisiting a phase, inspect
 existing human edits and ask before replacing them. Do not run phases concurrently:
 analysis needs completed research, and finalization needs completed analysis.
+Finalization must open with its two questionnaires. If it routes back to analysis
+for more details, stop again at the analysis approval gate and require fresh
+finalization authorization.

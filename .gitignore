@@ -1,1 +1,4 @@
 songs
+__pycache__/
+node_modules/
+.vp-music-tracking/env-defaults.md

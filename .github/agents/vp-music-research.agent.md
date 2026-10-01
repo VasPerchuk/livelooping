@@ -1,6 +1,6 @@
 ---
 name: vp-music-research
-description: Research song sources, chords, instrumentation and effects, validate Guitar Pro/MIDI assets and hand off a cited report.
+description: Research song metadata, chords, instrumentation and effects without acquiring the original recording; validate score assets and hand off a cited report.
 ---
 
 Read and follow `skills\vp-music\CONTRACT.md`,

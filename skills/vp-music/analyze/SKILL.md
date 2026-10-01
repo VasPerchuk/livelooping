@@ -12,6 +12,9 @@ a validated score or user-provided playable evidence for precise note-level tabs
 where absent, make a partial arrangement map and request sources instead of
 fabricating parts. The technical helper's `inspect` output is a starting point,
 not a proof that an uploaded transcription matches the recording.
+Do not read `.vp-music-tracking\env-defaults.md`. Analyze musical evidence
+independently of player count, loop capacity, controller layout, routing,
+synchronization or performance software.
 
 1. Inspect GP/MIDI tracks and explicit tempo, signature, pickup, repeats and
    marker events with `skills\vp-music\tools\music_assets.py inspect --path <asset>`.
@@ -50,14 +53,12 @@ not a proof that an uploaded transcription matches the recording.
    contour and harmonic compatibility. A loop repeats cleanly at its boundary
    and works across the stated sections; a fill, a single solo take and vocals
    do not qualify. Prefer one reusable core pattern to separate near-duplicates;
-   keep normally <=3 patterns per instrument. For RC-300, distinguish many
-   logical patterns from three physical stereo phrase tracks; Maschine 3 Groups,
-   Patterns and Scenes can represent more logical parts. Use
+   keep normally <=3 patterns per instrument. Keep logical musical patterns
+   separate from later physical loop/control allocation. Use
    `python skills\vp-music\scripts\pattern_candidates.py --path <asset>` for
    exact-repeat candidates; these are hints only, since repeated MIDI notes
    do not prove a musically good looping boundary or section name. Review
-   candidate bars against harmony and the recording. Do not assume how clock
-   is routed among the user's devices.
+   candidate bars against harmony and available evidence.
 4. For new preparations, write
    `.vp-music-tracking\pattern\<instrument>.patterns.md` for each repeatable
    instrument; for a legacy root-level workflow, update root
@@ -77,6 +78,16 @@ not a proof that an uploaded transcription matches the recording.
 
    Use readable pitch-lane ASCII grids for non-fretted instruments, never
    plausible-looking guitar fingerings without string/fret evidence.
+   In addition to the short grids, author the **complete original reduced
+   loop events** needed for a future scored arrangement in the versioned
+   handoff described by `analyze\references\arrangement-handoff.md`.
+   Use `.vp-music-tracking\arrangement\arrangement.json` for both layouts;
+   its creation does not migrate a legacy song's research/pattern locations.
+   Events need explicit onsets/durations and supported string/fret, pitch or
+   percussion evidence. Do not infer a full score from the ASCII summary or
+   copy an entire third-party tab into the new file. Record gaps instead of
+   creating placeholder notes; an incomplete arrangement handoff is allowed
+   while the worksheet can still be useful.
 5. For new preparations, write
    `.vp-music-tracking\draft\worksheet-draft.md` marked `**Status: Draft**`
    using the worksheet skill; reserve root `worksheet.md` for finalization.
@@ -86,11 +97,18 @@ not a proof that an uploaded transcription matches the recording.
    Every song section has its actual/estimated bar count, derived duration and
    precise active names from the pattern files; `none` is valid when no loop
    sounds in a break or solo. Note performance-only sections without analyzing
-   their note sequence. Describe missing instrument/section data explicitly.
+   their note sequence. Draft transitions as generic musical actions when
+   possible; defer concrete control feasibility and performer allocation to
+   finalization. Match section names, bar counts and active pattern names
+   in the scored handoff to this draft. For sections without loops, distinguish
+   live/unscored performance from intentional rest; for incomplete cycles,
+   record the intended tail explicitly. Describe missing instrument/section
+   data and GP-export blockers without delaying the analysis approval gate.
 
-Offer one to three explicitly numbered (`1.`, `2.`, `3.`) next actions and stop,
-including a request for missing sources instead of a finalize option when
-required tracks are unscored. If the source has no usable
-instrument notes, the recommended next action is more research or user input,
-not an unjustified final worksheet. Finalization requires explicit user
-approval; producing a draft is not approval to advance.
+Offer one to three explicitly numbered (`1.`, `2.`, `3.`) next actions and stop.
+Actionable missing sources, ambiguous tails, attribution conflicts and export
+limitations may be handed to finalization for its questionnaire; do not bind
+them to a performance environment here. If there is no usable musical material
+at all, recommend more evidence or an explicitly original design rather than
+an unjustified worksheet. Finalization requires explicit user approval;
+producing a draft is not approval to advance.

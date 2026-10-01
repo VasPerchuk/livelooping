@@ -21,6 +21,13 @@ create/reuse `songs\<artist_slug>-<song_slug>` and proceed with explicit gaps.
 Select the tracking or legacy artifact paths according to the contract.
 
 Verify identity and performance-relevant context against independent web sources.
+Do not download, rip, capture or otherwise acquire the original recording. Do not
+use large streaming services, their catalog APIs, previews or audio-feature
+endpoints for routine research. Access one only when independent sources cannot
+settle necessary identity metadata (artist, title, release, duration or version);
+record the limited metadata purpose and do not treat catalog duration as evidence
+for sections or bar counts. An existing user-provided recording may be optional
+corroboration, but do not request or acquire one as a research requirement.
 For musical details (chords, BPM/beat unit, key, meter, sections/bars, tracks,
 tuning, capo), inspect validated GP first; next use provided PDFs, explicit
 chord/tab text, then MIDI, only for gaps or an approved comparison. A high
@@ -66,3 +73,7 @@ only with explicit approval. If GP was sufficient, let the user choose lower-
 tier comparison or analysis approval explicitly; the research progress record
 must reflect the choice. If a site cannot be accessed, state this rather than
 inventing chords or an asset.
+
+Do not read `.vp-music-tracking\env-defaults.md` and do not add performance
+hardware/software choices to research artifacts. Describe source instrumentation
+and effects only as song evidence, independently of the user's performance setup.

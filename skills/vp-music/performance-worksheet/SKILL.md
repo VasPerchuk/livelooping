@@ -11,7 +11,10 @@ and pattern files as evidence, not guesses. Analysis writes
 `worksheet.md`. Finalization distills that draft into root `worksheet.md`.
 For a legacy preparation, keep the existing root Draft/Final location instead.
 Keep source justification, unresolved assumptions, and detailed alternative
-transition plans in the draft; the final is a glanceable action map.
+transition plans in the draft; the published Final or approved Partial is a
+glanceable action map.
+Exact personal hardware/software names never appear in either worksheet.
+Finalization translates confirmed capabilities into generic performer actions.
 
 ```markdown
 # Artist - Song
@@ -28,11 +31,11 @@ transition plans in the draft; the final is a glanceable action map.
 ## Structure
 ### Intro - 4 bars (~9 seconds)
 Patterns: Drums A
-Transition: At the next downbeat, enable Bass A in the next Maschine Scene.
+Transition: At the next downbeat, launch the prepared state containing Bass A.
 
 ### Verse 1 - 16 bars (~34 seconds)
 Patterns: Drums A, Bass A
-Transition: At the last bar, mute both with one prepared Scene change.
+Transition: At the last bar, mute both with one prepared state change.
 
 ### Break - 2 bars (~4 seconds)
 Patterns: none
@@ -47,14 +50,14 @@ of unique loop patterns, not section repetitions. Keep pattern length distinct
 from section length. Label estimates next to each uncertain bar count and time;
 if a vital section is unknown, leave Draft in the active draft location.
 Each section, including the ending, needs a short `Transition:` line saying
-exactly what the performer does next (or how to stop the song). Check that
-one human can operate the required controls within the available beats.
-If simultaneous RC-300 channel changes cannot be operated, write
+exactly what the performer does next (or how to stop the song). During finalization, check that the confirmed players can operate the required
+controls within the available beats. If simultaneous independent changes cannot
+be operated, write
 `Transition: INFEASIBLE — ...` at the section and a conspicuous
 `**Transition warning:** ...` near the final header. Explain the physical
 constraint and feasible alternative(s) in the draft. A warned Final may
 still be published when the music is well supported, but must not be sold as
-fully executable. Prefer one prepared Maschine Scene over several simultaneous
+fully executable. Prefer one prepared state change over several simultaneous
 manually triggered actions where appropriate.
 
 Calculate seconds from meter and quarter-note tempo, or integrate event-map
@@ -64,7 +67,11 @@ glanceability, never a reason to adjust actual bar counts. Cite research for
 section boundaries in the draft; include only essential uncertainty in a brief
 final warning if needed. Never copy the draft's full evidence log into Final.
 
-Maschine Groups/Patterns/Scenes and RC-300 three-track allocation may be
-noted as optional compact live cues; they are not properties of the recording.
-HX Stomp effect suggestions are suggestions, not verified original effects.
-Do not prescribe MIDI clock sync until its master and cabling are confirmed.
+Use generic terms such as pattern, prepared state, loop track, effect change and
+performer. Do not prescribe synchronization until its master and routing are
+confirmed.
+
+For an explicitly approved unreliable publication, use `**Status: Partial**`
+and add a nonempty `**Limitations:**` warning near the header. Name estimated or
+omitted sections/parts and uncertain transitions. Do not use Partial merely for
+an infeasible but fully evidenced transition: a warned Final remains appropriate.

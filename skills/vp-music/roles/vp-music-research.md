@@ -13,5 +13,9 @@ musical information. If GP is sufficient, verify identity/context online and
 ask before analyzing lower tiers; no mandatory MIDI acquisition. Stage every
 new music download and validate it with the technical helper before retaining
 it. Report rejected files and missing sources.
+Never acquire the original recording. Use a large streaming service only when
+necessary for identity metadata, not for audio, previews, audio features or
+routine research. Do not read performance-environment defaults or prescribe
+the user's hardware/software in research artifacts.
 Hand off only after summarizing concrete evidence needed for pattern analysis.
 Offer up to three next actions, including analysis subject to explicit approval.

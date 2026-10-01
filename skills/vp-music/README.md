@@ -2,8 +2,8 @@
 
 The canonical, host-independent role and skill instructions live in this folder.
 `CONTRACT.md` defines artifacts and human approval gates. `roles\` contains the
-four agents; `research\`, `analyze\`, `finalize\`, `performance-worksheet\` and
-`prepare\` contain task skills. Project Copilot adapters live in
+four agents; `research\`, `analyze\`, `finalize\`, `performance-worksheet\`,
+`arrangement\` and `prepare\` contain task skills. Project Copilot adapters live in
 `.github\agents\` and `.github\skills\`; they point back to these canonical files.
 The `performance-worksheet\` skill replaces the former single-pass worksheet.
 
@@ -18,6 +18,9 @@ checked first. If no authoritative files are available, the researcher asks
 once for notes, GP, PDFs, text tabs/chords or MIDI, then proceeds with stated
 gaps if you have none. Research verifies identity/context online and ranks
 musical evidence GP > user-provided PDF > explicit chord/tab text > MIDI.
+It does not acquire the original recording and uses large streaming services
+only when necessary for song identity metadata, never as routine audio or
+audio-feature sources.
 When GP is sufficient, choose whether to compare lower-tier sources or move
 to the separate analysis approval gate. Existing PDF-reading capability may
 be used for an approved comparison; there is no dedicated PDF score parser.
@@ -25,18 +28,42 @@ be used for an approved comparison; there is no dedicated PDF score parser.
 The user-facing `chords.md` exists from research; a concise `worksheet.md` is
 published only at finalization. Workflow files for new preparations live under
 `.vp-music-tracking\`: `research\research.md`,
-`pattern\<instrument>.patterns.md`, `draft\worksheet-draft.md`. The draft
+`pattern\<instrument>.patterns.md`, `draft\worksheet-draft.md`; analysis also
+authors `arrangement\arrangement.json` with complete original reduced-loop
+note events when musical evidence supports them. The draft
 retains assumptions; the final shows section bars/times, active patterns and
 a short human `Transition:` action per block. Any impossible simultaneous
 actions receive an explicit `INFEASIBLE` section cue and final warning.
 Existing prepared song folders retain their root-level workflow files without
-automatic migration. Source assets stay in the song root.
+automatic migration; their arrangement handoff also lives under tracking.
+Source assets stay in the song root.
+
+Approved finalization starts with a conflict/gap questionnaire and then confirms
+the performance environment. Exact personal hardware/software defaults live
+only in local, ignored `.vp-music-tracking\env-defaults.md`; research, analysis
+and song artifacts remain product-neutral. A changed environment is a one-off
+override unless the user separately approves replacing the defaults.
+
+Finalization compiles
+`.vp-music-tracking\arrangement\performance-arrangement.json`, a concise
+`worksheet.md` and continuous instrumental `arrangement.gp`, using the analyzed
+event handoff and
+`skills\vp-music\arrangement\SKILL.md`. The pinned alphaTab GP7+ exporter
+produces modern ZIP-based `.gp` files (not legacy `.gp5`). Short ASCII
+patterns alone cannot be exported as a complete score: missing events,
+unsupported tempo/meter changes, ambiguous rests/live passages or an
+existing output are explicit GP blockers. If questions cannot close essential
+gaps, the user may provide more details and rerun analysis/finalization, pause,
+or explicitly accept visibly labeled Partial worksheet and GP results. Partial
+consent never bypasses structural validation, source rights or exporter limits.
+Do not overwrite source scores or assume uploaded third-party tablature can be
+copied wholesale.
 
 ## Copilot CLI activation
 
 Project discovery is documented for repository `.github` directories. Although
 this folder is not currently a Git repository, `copilot skill list` run from
-here already shows all five project skills. If an agent/skill does not show
+here has shown the project skills. If an agent/skill does not show
 up in your session, explicitly trust the folder from the `livelooping` root
 with `copilot --add-dir .` (the local CLI's `--help` says this loads its
 `.github\agents` and `.github\skills`). Confirm discovery with `/agent` and
@@ -54,11 +81,11 @@ New-Item -ItemType Directory -Force "$HOME\.copilot\agents", "$HOME\.copilot\ski
 foreach ($name in @('vp-music-prepare','vp-music-research','vp-music-analyze','vp-music-finalize')) {
     if (Test-Path "$HOME\.copilot\agents\$name.agent.md") { throw "Already exists: $name.agent.md" }
 }
-foreach ($name in @('vp-music-prepare','vp-music-research','vp-music-analyze','vp-music-finalize','vp-music-worksheet')) {
+foreach ($name in @('vp-music-prepare','vp-music-research','vp-music-analyze','vp-music-finalize','vp-music-worksheet','vp-music-arrangement')) {
     if (Test-Path "$HOME\.copilot\skills\$name") { throw "Already exists: $name" }
 }
 Copy-Item ".github\agents\vp-music-*.agent.md" "$HOME\.copilot\agents\"
-foreach ($name in @('vp-music-prepare','vp-music-research','vp-music-analyze','vp-music-finalize','vp-music-worksheet')) {
+foreach ($name in @('vp-music-prepare','vp-music-research','vp-music-analyze','vp-music-finalize','vp-music-worksheet','vp-music-arrangement')) {
     Copy-Item ".github\skills\$name" "$HOME\.copilot\skills\$name" -Recurse
 }
 ```
@@ -71,13 +98,14 @@ Restart the CLI or reload skills and check `/agent` and `/skills info
 vp-music-prepare`. If a host has different agent/skill discovery rules, use
 the canonical Markdown directly and preserve the same handoff contract.
 
-## Equipment assumptions
+## Performance defaults
 
-Maschine 3 + Mikro MK3 handles sequenced patterns/scenes. The RC-300 can
-handle up to three independent stereo phrase tracks; the original Ditto is
-an optional manually timed audio loop. HX Stomp is for effects, Cubase for
-preparation. MIDI clock routing is not yet chosen. The workflow does not
-claim Maschine can force the RC-300 to follow its clock.
+Keep exact personal hardware/software only in repository-root
+`.vp-music-tracking\env-defaults.md`. This file is local and ignored. Only
+finalization reads it, asks for confirmation and maps its capabilities to
+generic performer actions. Do not copy product names, versions, preset
+identifiers or device routing into research, analysis, worksheets, manifests
+or generated score metadata.
 
 ## Technical helpers
 
@@ -92,7 +120,9 @@ for the analyzer to review, rather than asserting sections automatically.
 worksheet, including per-section transition lines in the new layout. It also
 checks pattern references and steady-tempo durations. Read `--help` for
 details. `analyze\references\midi-pitches.md` documents provisional MIDI
-instrument/drum identification. Existing examples include
+instrument/drum identification. `tools\write_arrangement.mjs` exports a matching Final or explicitly approved
+Partial reduction only after checking its event/section handoff, publication
+metadata and worksheet and refusing overwrite. Existing examples include
 GP3/4/5, GPX, ZIP-based modern GP and MIDI; the validator fails explicitly on
 unsupported formats. It does not determine whether a transcription matches the
 recording.

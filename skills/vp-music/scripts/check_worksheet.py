@@ -9,7 +9,7 @@ import sys
 def check(song_dir, require_final=False):
     folder = Path(song_dir)
     tracking = folder / ".vp-music-tracking"
-    new_layout = tracking.is_dir()
+    new_layout = any((tracking / part).exists() for part in ("research", "pattern", "draft"))
     draft = tracking / "draft" / "worksheet-draft.md"
     sheet_path = folder / "worksheet.md"
     if new_layout and not require_final:
@@ -20,10 +20,16 @@ def check(song_dir, require_final=False):
         errors.append("published worksheet has no tracking draft")
     if new_layout and (folder / "research.md").exists():
         errors.append("both legacy and tracking research locations exist; choose one handoff")
-    if require_final and not re.search(r"\*\*Status:\s*Final\*\*", sheet, re.I):
-        errors.append("worksheet is not marked Final")
-    if not re.search(r"\*\*Status:\s*(Draft|Final)\*\*", sheet, re.I):
-        errors.append("worksheet has no Draft/Final status")
+    statuses = re.findall(r"(?mi)^\*\*Status:\s*(Draft|Final|Partial)\*\*\s*$", sheet)
+    if len(statuses) != 1:
+        errors.append("worksheet must have exactly one Draft/Final/Partial status")
+    status = statuses[0].lower() if len(statuses) == 1 else None
+    if require_final and status not in ("final", "partial"):
+        errors.append("published worksheet is not marked Final or Partial")
+    if status == "partial":
+        limitations = re.findall(r"(?mi)^\*\*Limitations:\*\*\s*(\S.*?)\s*$", sheet)
+        if len(limitations) != 1:
+            errors.append("Partial worksheet needs exactly one nonempty Limitations warning")
     names = {}
     pattern_dir = tracking / "pattern" if new_layout else folder
     if new_layout and list(folder.glob("*.patterns.md")):

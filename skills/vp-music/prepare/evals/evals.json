@@ -3,7 +3,7 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "Prep The White Stripes - Seven Nation Army for my Maschine 3/Mikro MK3 and RC-300 live set. Use the GP3 and MIDI already in white_stripes-seven_nation_army; I have not approved moving beyond research yet.",
+      "prompt": "Prep The White Stripes - Seven Nation Army for a live-loop set. Use the GP3 and MIDI already in white_stripes-seven_nation_army; I have not approved moving beyond research yet.",
       "expected_output": "Cited internal research and a sourced root chords.md, GP3 validated without overwriting it, then a choice to compare lower-tier MIDI if needed or separately approve analysis. No draft worksheet or pattern files yet.",
       "files": [],
       "expectations": [
@@ -29,7 +29,7 @@
       "expected_output": "Accurate compound-meter timing, three named instrumental patterns, chord voicings with tuning/capo qualification, no full internet lyrics, and a concise root final worksheet with explicit section transitions.",
       "files": [],
       "expectations": [
-        "The 6/8 timing treats dotted-quarter 80 BPM as two beats per bar.",
+        "The 6/8 timing treats dotted-quarter 80 BPM as two beats per bar; unsupported GP v1 timing is reported as a GP blocker without discarding the supported worksheet.",
         "The final worksheet references exactly three named instrumental patterns.",
         "Unlicensed website lyrics are not reproduced.",
         "Every final section has a short feasible Transition line or an INFEASIBLE cue and a conspicuous warning."
@@ -47,12 +47,77 @@
     },
     {
       "id": 5,
-      "prompt": "The score is fully sufficient; arrange a live transition where both RC-300 tracks would need separate pedals pressed on the same beat, and finalize my approved worksheet.",
-      "expected_output": "A concise final worksheet explicitly marks the unachievable transition and a prominent warning, while the internal draft documents a one-action scene or staged-mute alternative.",
+      "prompt": "The score is fully sufficient; after confirming my setup, arrange a live transition where two independent loop controls would need activating on the same beat, and finalize my approved worksheet.",
+      "expected_output": "Finalization first resolves conflicts and confirms the environment, then a concise final worksheet marks any unachievable transition and a prominent warning while the internal draft documents a one-action prepared-state or staged-mute alternative.",
       "files": [],
       "expectations": [
+        "Finalization begins with conflict resolution and performance-defaults confirmation before writing outputs.",
         "The final section is marked INFEASIBLE with a Transition warning rather than presenting impossible controls as playable.",
         "The detailed alternative and caveats stay in the internal draft."
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "I've approved finalizing a fully analyzed original two-track 4/4 song. Its scored pattern handoff has exact quarter-note events, tuning, and two sections. Publish a short worksheet and the complete modern arrangement.gp.",
+      "expected_output": "Worksheet passes section checks; a genuine GP7+ arrangement.gp is emitted from analyzed reduced-loop events and verified against the scored handoff without overwriting source assets.",
+      "files": [],
+      "expectations": [
+        "A generated modern ZIP-based .gp has the correct track, section bar, meter, tempo and note-event coverage.",
+        "The source GP remains unmodified and the final worksheet does not contain note-level tab."
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "Finalize the supported worksheet for my legacy song. Its old pattern Markdown is intentionally abbreviated and contains no scored arrangement.json, and I didn't approve a new analysis pass.",
+      "expected_output": "Finalization asks the opening questionnaires and explains that ASCII patterns do not contain complete score events. It offers more details/reanalysis, pause, or informed Partial results only if a structurally valid available reduction exists.",
+      "files": [],
+      "expectations": [
+        "No fabricated Guitar Pro notes are created and exporter constraints are not bypassed by Partial consent.",
+        "Legacy files are not migrated and reanalysis requires a fresh finalization approval."
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "Research a newly released song for looping. Do not download or capture its recording. A large streaming catalog is the only source that distinguishes the studio version from a same-name live release.",
+      "expected_output": "Research uses the catalog only for the necessary version metadata, cites that narrow purpose, does not request audio features or acquire a recording, and uses independent/score evidence for musical claims.",
+      "files": [],
+      "expectations": [
+        "No original recording, preview, stream capture or audio-feature data is acquired.",
+        "The streaming source is used and cited only for necessary identity/version metadata.",
+        "Catalog duration is not treated as evidence for section or bar counts."
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "Analyze this validated score into loops. The repository has performance defaults, but do not tailor anything to them yet. The ending has an ambiguous half-cycle that finalization should ask me about.",
+      "expected_output": "Hardware-neutral patterns, draft and event handoff are produced without reading defaults. The half-cycle is an explicit finalization question and analysis stops for approval.",
+      "files": [],
+      "expectations": [
+        "Analysis does not read or quote env-defaults.md and does not allocate patterns to products or controllers.",
+        "The ambiguous tail is preserved as a gap rather than silently truncated.",
+        "Finalization is offered as an explicitly approved next phase despite the actionable gap."
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "Finalize the analyzed song. My current setup differs from saved defaults: two players, one prepared-state launcher and one two-track audio looper. Do not rewrite my defaults. The bridge guitar has no reliable notes; I am willing to accept partial rehearsal files if you disclose that.",
+      "expected_output": "Finalization resolves the bridge gap and confirms the alternate environment, separately asks whether defaults should change, honors the refusal, then emits matching product-neutral Partial worksheet and GP from supported events with disclosed omission and consent.",
+      "files": [],
+      "expectations": [
+        "Each gap/environment question has at most three numbered options and the alternate setup does not silently replace defaults.",
+        "Exact setup details are absent from song artifacts; generic two-player roles and transition actions are retained.",
+        "Both outputs are visibly Partial, share the disclosed bridge limitation, and contain no fabricated bridge guitar notes."
+      ]
+    },
+    {
+      "id": 11,
+      "prompt": "Finalize this analysis, but its tempo changes and tied notes cannot be represented by the current exporter. I approve partial results anyway.",
+      "expected_output": "The workflow explains that Partial consent does not bypass hard notation limits, offers supported simplifications only as explicit original choices, and otherwise reports the GP blocker rather than claiming complete success.",
+      "files": [],
+      "expectations": [
+        "Partial consent does not coerce unsupported tempo changes, ties or cross-bar notes into the current schema.",
+        "No malformed or falsely successful arrangement.gp is published.",
+        "Any proposed simplification is explicitly approved and labeled as an original arrangement decision."
       ]
     }
   ]

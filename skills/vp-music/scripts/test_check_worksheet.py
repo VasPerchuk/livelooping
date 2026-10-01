@@ -6,6 +6,23 @@ from check_worksheet import check
 
 
 class WorksheetCheckTest(unittest.TestCase):
+    def test_legacy_layout_ignores_arrangement_handoff_directory(self):
+        with tempfile.TemporaryDirectory() as directory:
+            song = Path(directory)
+            handoff = song / ".vp-music-tracking" / "arrangement"
+            handoff.mkdir(parents=True)
+            (handoff / "arrangement.json").write_text("{}", encoding="utf-8")
+            (song / "drums.patterns.md").write_text(
+                "## Pattern: Drums A\n", encoding="utf-8"
+            )
+            (song / "worksheet.md").write_text(
+                "# Legacy\n**Status: Final**\n**Tempo:** 120 BPM\n"
+                "**Meter:** 4/4\n## Patterns (1 total)\n- **Drums A**\n"
+                "## Structure\n### Intro - 1 bar (~2 seconds)\n"
+                "Patterns: Drums A\n", encoding="utf-8"
+            )
+            self.assertEqual(check(song, require_final=True), [])
+
     def test_tracking_draft_and_published_final_with_transitions(self):
         with tempfile.TemporaryDirectory() as directory:
             song = Path(directory)
@@ -64,6 +81,40 @@ class WorksheetCheckTest(unittest.TestCase):
                 encoding="utf-8",
             )
             self.assertEqual(check(song, True), [])
+
+    def test_partial_publication_requires_limitations(self):
+        with tempfile.TemporaryDirectory() as directory:
+            song = Path(directory)
+            (song / "drums.patterns.md").write_text(
+                "## Pattern: Drums A\n", encoding="utf-8"
+            )
+            sheet = (
+                "# Test\n**Status: Partial**\n**Tempo:** 120 BPM\n**Meter:** 4/4\n"
+                "## Patterns (1 total)\n- **Drums A**\n## Structure\n"
+                "### Intro - 1 bar (~2 seconds)\nPatterns: Drums A\n"
+            )
+            (song / "worksheet.md").write_text(sheet, encoding="utf-8")
+            errors = check(song, require_final=True)
+            self.assertTrue(any("Limitations" in error for error in errors))
+            (song / "worksheet.md").write_text(
+                sheet.replace(
+                    "## Patterns",
+                    "**Limitations:** Lead part omitted by explicit approval.\n\n## Patterns",
+                ),
+                encoding="utf-8",
+            )
+            self.assertEqual(check(song, require_final=True), [])
+
+    def test_rejects_duplicate_status_lines(self):
+        with tempfile.TemporaryDirectory() as directory:
+            song = Path(directory)
+            (song / "worksheet.md").write_text(
+                "# Test\n**Status: Final**\n**Status: Partial**\n"
+                "**Limitations:** uncertain\n## Patterns (0 total)\n"
+                "## Structure\n### Break - 1 bar (~2 seconds)\nPatterns: none\n",
+                encoding="utf-8",
+            )
+            self.assertTrue(any("exactly one" in error for error in check(song, True)))
 
     def test_tracking_rejects_legacy_pattern_mix(self):
         with tempfile.TemporaryDirectory() as directory:

@@ -3,8 +3,9 @@ name: vp-music-prepare
 description: >-
   Coordinate a multi-phase livelooping song preparation from artist and title:
   research and validate chords and Guitar Pro/MIDI, analyze repeatable
-  instrumental patterns and song structure, then finalize chord fingerings
-  and the performance worksheet. Use whenever a user asks to prepare, arrange
+  instrumental patterns and song structure, then finalize chord fingerings,
+  the performance worksheet and a scored Guitar Pro reduction when the
+  analyzed events support one. Use whenever a user asks to prepare, arrange
   or build a livelooping worksheet for a song. Pause for explicit approval
   after research and after analysis; route to the specialized vp-music agents.
 ---
@@ -13,6 +14,8 @@ description: >-
 
 Read `skills\vp-music\CONTRACT.md` and `skills\vp-music\roles\vp-music-prepare.md`.
 The phases are research -> approval -> analysis -> approval -> finalization.
+Finalization begins with conflict/gap resolution and performance-environment
+confirmation before writing outputs; it is not a mechanical publish step.
 At each phase, read its role and skill instructions:
 
 | Phase | Role | Skill |

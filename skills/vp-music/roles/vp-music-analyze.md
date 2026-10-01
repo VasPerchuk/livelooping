@@ -11,6 +11,15 @@ non-recurring solo transcription. For new preparations, write one
 publish root `worksheet.md` during analysis. For legacy root-level workflows,
 update root patterns and Draft `worksheet.md` in place. If both layouts coexist,
 ask which handoff is current instead of creating a second active draft.
+Write the original reduced-event handoff under
+`.vp-music-tracking\arrangement\arrangement.json` when the source supports it,
+following `analyze\references\arrangement-handoff.md`; this location is shared
+by new and legacy workflows. Mark unsupported parts as GP blockers rather
+than inventing full note sequences from abbreviated ASCII tabs.
+Never read the repository performance-defaults file or allocate parts to exact
+hardware/software. Keep patterns, musical transitions and the scored handoff
+independent of player count, loop capacity, routing and control layout; list
+these as finalization questions only when they affect feasibility.
 
 For generic MIDI track names, use `analyze\references\midi-pitches.md` and
 inspect per-note channel (zero-based; 9 means GM channel 10), pitch range,
@@ -26,5 +35,7 @@ sound or guitar fingering.
 Do not assert a section length merely because a file contains that many MIDI ticks.
 Check repeats, meter, tempo, pickups and source omissions; name every gap and
 uncertainty explicitly. Pattern names in the worksheet must resolve to real
-patterns. Offer up to three next actions including finalization only if the draft
-has enough evidence; obtain approval before that handoff.
+patterns. Offer up to three next actions. An analysis with explicit actionable gaps may
+offer finalization so its opening questionnaire can resolve them; a preparation
+with no usable musical material should instead seek evidence or an approved
+original design. Obtain approval before the handoff.
