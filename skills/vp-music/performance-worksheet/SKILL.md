@@ -1,77 +1,42 @@
 ---
 name: vp-music-worksheet
-description: Draft or finalize an easy-to-scan live-looping performance worksheet from verified song research and repeatable instrument patterns. Use when vp-music-analyze or vp-music-finalize needs worksheet.md, or a user asks specifically for a loop structure map with section bars, approximate durations, active patterns and executable human transitions. Keep chords, note-level tabs and vocal lines in separate files.
+description: Draft or publish a concise instrumental live-loop worksheet from analyzed song sections and repeatable patterns, showing bars, seconds, active loops and actionable transitions without tabs or chords. Use when asked for a song's loop structure map.
 ---
 
 # Performance worksheet
 
-Read `skills\vp-music\CONTRACT.md` before writing. Use the active research record
-and pattern files as evidence, not guesses. Analysis writes
-`.vp-music-tracking\draft\worksheet-draft.md`, never the published root
-`worksheet.md`. Finalization distills that draft into root `worksheet.md`.
-For a legacy preparation, keep the existing root Draft/Final location instead.
-Keep source justification, unresolved assumptions, and detailed alternative
-transition plans in the draft; the published Final or approved Partial is a
-glanceable action map.
-Exact personal hardware/software names never appear in either worksheet.
-Finalization translates confirmed capabilities into generic performer actions.
+Read `skills\vp-music\CONTRACT.md`. Do not hand-author authoritative worksheets.
 
-```markdown
-# Artist - Song
+- Analysis Draft:
 
-**Status: Final**
-**Version:** [recording / arrangement]
-**Tempo:** quarter = 112 BPM  **Meter:** 4/4
-**Key:** [if useful; disputed or unknown if applicable]
+  ```text
+  python skills\vp-music\tools\render_views.py --manifest <arrangement.json> --song-dir <song>
+  ```
 
-## Patterns (2 total)
-- **Drums A** (2 bars) - [source pattern filename]
-- **Bass A** (4 bars) - [source pattern filename]
+- Published Final/Partial:
 
-## Structure
-### Intro - 4 bars (~9 seconds)
-Patterns: Drums A
-Transition: At the next downbeat, launch the prepared state containing Bass A.
+  ```text
+  python skills\vp-music\tools\render_views.py --plan <performance-arrangement.json> --song-dir <song> --title "Artist - Song"
+  python skills\vp-music\scripts\check_worksheet.py --song-dir <song> --plan <performance-arrangement.json>
+  ```
 
-### Verse 1 - 16 bars (~34 seconds)
-Patterns: Drums A, Bass A
-Transition: At the last bar, mute both with one prepared state change.
+The compiled plan owns section order, retained/deleted instances, output bars,
+times, placements, omissions, limitations, consent and transitions. Check every
+section locally; an action or track listed elsewhere cannot satisfy it.
 
-### Break - 2 bars (~4 seconds)
-Patterns: none
-Transition: Count two bars and launch the chorus Scene on beat 1.
-```
+Keep the published worksheet glanceable:
 
-Build the structure in **performed playback order** including repeated verses,
-instrumental breaks, solo (as a section without a solo *pattern*), bridge and
-ending where present. Use exactly the instrument pattern names defined in
-pattern files; no vocal pattern or one-off solo tab. The total is the number
-of unique loop patterns, not section repetitions. Keep pattern length distinct
-from section length. Label estimates next to each uncertain bar count and time;
-if a vital section is unknown, leave Draft in the active draft location.
-Each section, including the ending, needs a short `Transition:` line saying
-exactly what the performer does next (or how to stop the song). During finalization, check that the confirmed players can operate the required
-controls within the available beats. If simultaneous independent changes cannot
-be operated, write
-`Transition: INFEASIBLE — ...` at the section and a conspicuous
-`**Transition warning:** ...` near the final header. Explain the physical
-constraint and feasible alternative(s) in the draft. A warned Final may
-still be published when the music is well supported, but must not be sold as
-fully executable. Prefer one prepared state change over several simultaneous
-manually triggered actions where appropriate.
+- status, tempo, meter, total bars/time;
+- generic instruments and stable output IDs;
+- each retained section's output range, duration, active loops/live cues, rests;
+- one confirmed action into each retained section;
+- omissions/edits and Partial limitations.
 
-Calculate seconds from meter and quarter-note tempo, or integrate event-map
-tempo changes. If BPM is in dotted-quarter beats (e.g. 6/8), convert appropriately
-instead of treating the meter numerator as quarter beats. Rounding is for
-glanceability, never a reason to adjust actual bar counts. Cite research for
-section boundaries in the draft; include only essential uncertainty in a brief
-final warning if needed. Never copy the draft's full evidence log into Final.
+Do not include chords, full tabs, vocal/solo transcription, exact personal
+hardware, evidence logs or invented synchronization. Pattern grids live in
+generated pattern files.
 
-Use generic terms such as pattern, prepared state, loop track, effect change and
-performer. Do not prescribe synchronization until its master and routing are
-confirmed.
-
-For an explicitly approved unreliable publication, use `**Status: Partial**`
-and add a nonempty `**Limitations:**` warning near the header. Name estimated or
-omitted sections/parts and uncertain transitions. Do not use Partial merely for
-an infeasible but fully evidenced transition: a warned Final remains appropriate.
+For an infeasible action, render `INFEASIBLE` in the section and a prominent
+header warning explaining the constraint. A warned Final may remain valid when
+the music is reliable; incomplete/estimated music needs consented Partial status.
+Never publish Draft or unresolved review prose as Final.

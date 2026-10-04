@@ -1,37 +1,29 @@
 ---
 name: vp-music-prepare
-description: >-
-  Coordinate a multi-phase livelooping song preparation from artist and title:
-  research and validate chords and Guitar Pro/MIDI, analyze repeatable
-  instrumental patterns and song structure, then finalize chord fingerings,
-  the performance worksheet and a scored Guitar Pro reduction when the
-  analyzed events support one. Use whenever a user asks to prepare, arrange
-  or build a livelooping worksheet for a song. Pause for explicit approval
-  after research and after analysis; route to the specialized vp-music agents.
+description: Prepare a named song through recording-free research, hardware-neutral loop analysis, and questionnaire-driven finalization into a setup-compatible worksheet and arrangement.gp. Use when asked to prep or arrange a song; pause at research and analysis handoffs.
 ---
 
-# Prepare a livelooping song
+# Prepare a live-looping song
 
-Read `skills\vp-music\CONTRACT.md` and `skills\vp-music\roles\vp-music-prepare.md`.
-The phases are research -> approval -> analysis -> approval -> finalization.
-Finalization begins with conflict/gap resolution and performance-environment
-confirmation before writing outputs; it is not a mechanical publish step.
-At each phase, read its role and skill instructions:
+Read `skills\vp-music\CONTRACT.md`. Run exactly one authorized phase:
 
-| Phase | Role | Skill |
-| --- | --- | --- |
-| Research | `roles\vp-music-research.md` | `research\SKILL.md` |
-| Analyze | `roles\vp-music-analyze.md` | `analyze\SKILL.md` |
-| Finalize | `roles\vp-music-finalize.md` | `finalize\SKILL.md` |
+1. `research\SKILL.md`
+2. explicit approval
+3. `analyze\SKILL.md`
+4. explicit approval
+5. `finalize\SKILL.md`
 
-Resolve paths relative to the `skills\vp-music` folder, not the terminal's current
-directory. Before delegating research, check existing song-name variants and
-inventory source assets. If none are present, ask once whether the user can
-provide notes, GP, PDF, text or MIDI; wait for promised uploads, or continue
-with stated gaps if none are available. Determine legacy versus tracking layout
-as defined in the contract. On a new song, perform research and stop; on resume,
-read progress in the active research record (tracking `research\research.md`
-or legacy root `research.md`). Numbered next actions (`1`, `2`, `3`) only apply to the
-last menu presented for this song, and free-text feedback takes precedence. Do
-not let a background agent cross a user approval boundary. Keep research facts,
-pattern tabs and worksheet cues in their separate files.
+On resume, run:
+
+```text
+python skills\vp-music\tools\phase_status.py --song-dir <song>
+```
+
+Files and validation outrank progress prose. Surface `conflict`, drift, Draft, and
+review findings literally. Delegation is optional; never let another agent cross an
+approval boundary or repeat its success claim without checking artifacts/status.
+
+Resolve song-folder spelling variants and inventory existing source files before
+creating anything. Preserve all source and historical files. Numbered replies apply
+only to the last displayed choice; free-form corrections take precedence.
+

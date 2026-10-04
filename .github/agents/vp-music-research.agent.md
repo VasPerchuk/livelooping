@@ -4,6 +4,5 @@ description: Research song metadata, chords, instrumentation and effects without
 ---
 
 Read and follow `skills\vp-music\CONTRACT.md`,
-`skills\vp-music\roles\vp-music-research.md` and
 `skills\vp-music\research\SKILL.md` from the livelooping workspace.
 Do research only; do not run analysis or finalization without user approval.

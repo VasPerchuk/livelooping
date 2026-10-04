@@ -1,79 +1,45 @@
 ---
 name: vp-music-research
-description: >-
-  Research a named song for personal live-looping preparation: verify song
-  details, chord sources, instruments, effects and useful performance trivia;
-  find and validate Guitar Pro/MIDI assets; write a cited research report and
-  initial chords.md. Use for the research phase of vp-music-prepare or when the
-  user explicitly requests music preparation research, not for final worksheet
-  production.
+description: Research chords and song facts from GP-first evidence without acquiring the original recording, producing an internal cited record and root chords.md. Use streaming services only for necessary identity metadata; ask for missing score assets and pause when GP is sufficient.
 ---
 
-# Research a song for looping
+# Research a song
 
-Read `skills\vp-music\CONTRACT.md` and the `vp-music-research` role. First confirm
-artist, title and recording/arrangement (live versions may have different bars).
-Find existing song folders including spelling variants, inventory their source
-assets, and reuse their files without overwriting unrelated material. If no
-authoritative assets are present, ask once for user uploads (notes, GP, PDF,
-explicit chord/tab text, MIDI). Wait for offered uploads; if none are possible,
-create/reuse `songs\<artist_slug>-<song_slug>` and proceed with explicit gaps.
-Select the tracking or legacy artifact paths according to the contract.
+Read `skills\vp-music\CONTRACT.md`. Confirm artist, title and exact
+recording/arrangement. Inventory spelling variants and existing files before
+creating `songs\<artist>-<title>`.
 
-Verify identity and performance-relevant context against independent web sources.
-Do not download, rip, capture or otherwise acquire the original recording. Do not
-use large streaming services, their catalog APIs, previews or audio-feature
-endpoints for routine research. Access one only when independent sources cannot
-settle necessary identity metadata (artist, title, release, duration or version);
-record the limited metadata purpose and do not treat catalog duration as evidence
-for sections or bar counts. An existing user-provided recording may be optional
-corroboration, but do not request or acquire one as a research requirement.
-For musical details (chords, BPM/beat unit, key, meter, sections/bars, tracks,
-tuning, capo), inspect validated GP first; next use provided PDFs, explicit
-chord/tab text, then MIDI, only for gaps or an approved comparison. A high
-rating alone does not establish correctness. Distinguish reported fact, score-
-specific transcription and hypothesis; record URLs beside web claims and local
-file/measure evidence beside score claims. If GP already answers all required
-musical questions, **pause** after web context verification and ask whether to
-inspect the next tier for corroboration or proceed to the normal analysis
-approval gate. This source decision never authorizes analysis by itself.
-When consulting PDFs use existing PDF capability only; if notation cannot be
-read reliably, mark it unverified rather than inventing notes.
+Ask once for user-provided GP, GPX, MIDI, PDF, notes, or explicitly supplied
+chord/tab text when precise evidence is missing. Do not acquire the original
+recording. Use modern/legacy GP first for musical facts, then provided notation,
+then MIDI. A transcription proves only its own contents. Pause when GP answers the
+musical questions; ask whether to compare lower-tier evidence or proceed to the
+analysis approval gate.
 
-Search for a missing usable score from authorized sources whose access
-and download terms permit the intended use; do not fetch lower-tier assets merely
-to populate every format. Keep already present files. For each
-direct download, use `python skills\vp-music\scripts\download_asset.py --url
-<https-url> --song-dir <song-folder> --name <new-filename>`: it bounds streamed
-bytes, checks redirects, stages in the song folder, invokes
-`tools\music_assets.py validate` and accepts only analyzed music with notes.
-If the site supplies a landing page rather than a direct URL, inspect the
-page for a real download URL instead of saving it as `.mid`. Reject HTML,
-malformed scores, unsafe ZIP members and unsupported formats; never execute
-downloaded content. Validate local files for analysis too, but do not delete
-an existing user file on failure.
-Log the asset origin, SHA-256, validator result and whether it has playable note
-content. If the helper is unavailable, explain the blocker and leave downloaded
-assets unaccepted rather than claim they are validated.
+For web facts, record URL, claim and confidence. Use streaming catalogs only when
+independent sources cannot settle necessary identity metadata. Access/download
+permission does not establish a right to reproduce complete lyrics, tabs or scores.
+Link to third-party material; copy only short necessary quotations or content the
+user supplied/has rights to use.
 
-Create `.vp-music-tracking\research\research.md` (or legacy root `research.md`)
-following `research\references\report-template.md` with
-`## Song identity`, `## Verified musical facts`,
-`## Arrangement and track evidence`, `## Effects and useful trivia`,
-`## Assets and validation`, `## Conflicts and gaps`, and `## Preparation progress`.
-List evidence/URL/confidence for each meaningful claim and indicate which tracks
-and sections still need investigation. Create initial `chords.md` with key/tempo,
-section-wise chord progression and source URLs. Ask user before copying an entire website's
-lyrics or tab into it; otherwise use full lyrics if supplied by the user, otherwise link the source. Do not assume a repeating guitar riff is a
-bass guitar merely because the MIDI program says "bass", research might show that it is played on a different instrument.
+Validate local/downloaded music with `tools\music_assets.py`. Use
+`scripts\download_asset.py` only for an authorized direct HTTPS music-file URL;
+never save a landing page as a score, execute downloads, delete a failed user file,
+or claim an unsupported file is valid. Log origin, SHA-256, format, parser result,
+notes and export eligibility separately. Older GP/GPX/MIDI may support analysis
+without supporting modern source-copy export.
 
-Stop at research completion, state whether analysis is supported by validated
-score material, and show up to three numbered next actions, including analysis
-only with explicit approval. If GP was sufficient, let the user choose lower-
-tier comparison or analysis approval explicitly; the research progress record
-must reflect the choice. If a site cannot be accessed, state this rather than
-inventing chords or an asset.
+Write:
 
-Do not read `.vp-music-tracking\env-defaults.md` and do not add performance
-hardware/software choices to research artifacts. Describe source instrumentation
-and effects only as song evidence, independently of the user's performance setup.
+- `.vp-music-tracking\research\research.md` using the report template;
+- root `chords.md` with key/tempo, section chart, sources and clearly marked
+  uncertainty.
+
+Separate verified fact, transcription-specific evidence, user statement and
+hypothesis. Record section/order/bar, instruments/effects, tuning/capo, conflicts,
+gaps and progress. Do not read performance defaults or design the user's hardware
+setup.
+
+Stop after research. State whether validated evidence supports analysis and offer
+up to three numbered next actions. Analysis needs explicit approval.
+

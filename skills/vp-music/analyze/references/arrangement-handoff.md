@@ -1,113 +1,185 @@
-# Scored reduction handoff (v1)
+# Version 2 arrangement handoff
 
-Analysis writes `.vp-music-tracking\arrangement\arrangement.json` for new
-**and** legacy songs when it can author complete instrumental loop events.
-This file is hardware-neutral: do not include product names, player/controller
-allocation, routing, synchronization or performance-software settings.
-This is an original reduction, not a copy of every note in a supplied score.
-The short ASCII pattern files remain separate and must use the same names.
-If the evidence does not support a playable part, record the gap in the draft
-and do not manufacture events to make an exporter pass.
+`arrangement.json` is the hardware-neutral analysis authority. Generated pattern
+Markdown and the Draft worksheet are views; the compiled performance plan is a
+separate finalization artifact.
 
-The v1 handoff is a single JSON object:
+## Analysis manifest
 
 ```json
 {
-  "version": 1,
+  "version": 2,
+  "source": {
+    "asset_relative_path": "source.gp",
+    "asset_sha256": "<64 hex>",
+    "format": "gpif",
+    "capabilities": ["performed_order", "source_bar_reuse"]
+  },
+  "tracks": [],
+  "decisions": [],
+  "patterns": [],
+  "sections": [],
+  "performed_written_bars": [1, 2, 3, 4],
   "tempo_bpm": 120,
-  "meter": "4/4",
-  "tracks": [
-    {
-      "name": "Guitar",
-      "kind": "fretted",
-      "tuning_midi": [40, 45, 50, 55, 59, 64],
-      "capo_fret": 0,
-      "patterns": [
-        {
-          "name": "Guitar A",
-          "bars": 1,
-          "source": "original reduction; evidence: validated score, track and bars",
-          "confidence": "likely",
-          "notes": [
-            {
-              "bar": 1,
-              "offset_quarters": 0,
-              "duration_quarters": 1,
-              "string": 1,
-              "fret": 0,
-              "pitch": 40
-            }
-          ]
-        }
-      ]
-    }
-  ],
-  "sections": [
-    {"name": "Intro", "bars": 2, "patterns": ["Guitar A"]},
-    {"name": "Break", "bars": 1, "patterns": [], "empty_policy": "live"}
-  ]
+  "meter": "4/4"
 }
 ```
 
-The example is invented, not drawn from a song. The tuning array is MIDI
-pitches **low string to high string**, and a fretted note's `string` uses
-**1 = lowest-pitched string**, matching the modern GP exporter. The analyzer
-must convert legacy GP5's 1 = highest convention before recording events;
-the writer must round-trip-verify pitch and string/fret. A fretted note
-requires a nonnegative fret and evidenced string;
-`pitch` is an optional cross-check, not permission to invent a fret. For
-`kind: "pitched"` use a pitch (0-127) with no string/fret; for
-`kind: "percussion"` use the evidenced MIDI percussion pitch, not an
-unverified kit-piece name. Record a nonempty source and `confirmed`, `likely`
-or `estimated` confidence for each pattern; `unknown` is a GP blocker,
-including uncertainties about how its sounds map to the recording.
+Paths are song-relative and cannot escape the song directory. Hashes bind the
+manifest to the exact source bytes. `performed_written_bars` is optional only
+when performed order equals linear written order; when present, its length equals
+the sum of section bars.
 
-`bar` is 1-based within its pattern; `offset_quarters` starts at zero within
-that bar. Version 1 accepts 1/16-quarter onset positions (64th-note grid)
-and single **undotted** whole through 64th durations; notes must end within
-their own bar. Simultaneous notes can form a chord only if they have the
-same duration. Overlapping different onsets, ties, tuplets, independent
-voices and notes crossing bars are unsupported; record these as blockers
-rather than quantizing them silently. The
-published worksheet's `## Structure` supplies the authoritative performed
-section order/bar counts and active names. An event handoff's `sections`
-must match it; a non-multiple cycle length requires an explicit
-`tail_policy: "truncate"` after human review. A section with no active
-patterns needs `empty_policy: "rest"` (intentional silence) or `"live"`
-(unscored human performance); neither creates invented notes.
-
-Version 1 supports **constant** quarter-note BPM and meter only. For
-dotted-quarter tempo, changing meter/tempo, pickups, sustained notes crossing
-boundaries, unsupported string techniques or uncertain rhythm, leave the
-arrangement blocked with a specific reason while the supported worksheet
-can still be published. Do not silently coerce or average those cases.
-This sidecar is an internal file: never move an existing legacy worksheet or
-pattern file merely to create it. Never overwrite a hand-edited sidecar.
-
-Finalization creates a separate
-`.vp-music-tracking\arrangement\performance-arrangement.json` from this
-analysis handoff after resolving conflicts and confirming generic performance
-capabilities. Do not rewrite this neutral file to apply finalization choices.
-The performance handoff retains the version 1 musical fields and adds:
+### Tracks and spans
 
 ```json
 {
-  "publication": {
-    "status": "partial",
-    "limitations": ["Lead part omitted"],
-    "consent": "User accepted the disclosed omission for rehearsal."
-  },
+  "id": "track-rhythm",
+  "name": "Guitar",
+  "role": "rhythm",
+  "role_confidence": "likely",
+  "spans": [{
+    "id": "rhythm-a",
+    "disposition": "LOOP",
+    "match_tier": "exact",
+    "evidence": "bars 9-12 recur at 25-28",
+    "source_ref": {
+      "asset_relative_path": "source.gp",
+      "asset_sha256": "<same source hash>",
+      "track_index": 0,
+      "track_name": "Guitar",
+      "staff_index": 0,
+      "voice_indices": [0],
+      "written_master_bars": [9, 12],
+      "performed_occurrences": [1, 2],
+      "content_fingerprint": "<optional 64 hex>"
+    }
+  }]
+}
+```
+
+Track IDs are identity; names may duplicate. Dispositions are:
+
+- `LOOP`: repeatable retained candidate;
+- `LIVE`: performed/cued once rather than looped;
+- `OPTIONAL`: omitted by default unless explicitly retained;
+- `UNRESOLVED`: requires a decision before Final;
+- `REST`: intentional silence.
+
+`written_master_bars` is an inclusive contiguous range for source-copy material.
+Do not combine unrelated ranges into one source-copy pattern. Near-match evidence
+records matching/total bars and divergent offsets; it never silently normalizes
+source notes.
+
+### Decisions
+
+```json
+{
+  "id": "choose-rhythm-a",
+  "question": "Use the canonical loop or play this passage live?",
+  "options": ["use_canonical", "play_live", "omit"]
+}
+```
+
+A conditional decision adds both:
+
+```json
+{
+  "id": "omit-rhythm-a",
+  "depends_on": "choose-rhythm-a",
+  "applies_when": "use_canonical",
+  "question": "Keep or omit the canonical loop?",
+  "options": ["keep_loop", "omit"]
+}
+```
+
+Patterns bind decisions with `decision_ids`. The compiler follows the dependency
+graph; ordering and ID suffixes have no semantics.
+
+### Patterns and variants
+
+```json
+{
+  "id": "pattern-rhythm-a",
+  "name": "Rhythm A",
+  "track_id": "track-rhythm",
+  "track": "Guitar",
+  "span_ids": ["rhythm-a"],
+  "bars": 4,
+  "disposition": "LOOP",
+  "confidence": "confirmed",
+  "decision_ids": ["choose-rhythm-a", "omit-rhythm-a"],
+  "selection_reason": "Four-bar harmonic phrase with clean boundary",
+  "variants": [{
+    "id": "rhythm-a-ending",
+    "span_ids": ["rhythm-a-ending-span"],
+    "occurrence_index": 2
+  }]
+}
+```
+
+Variants reference owning spans; they do not carry a second incompatible source
+reference shape. `selection_reason` documents musical selection only.
+
+### Sections
+
+```json
+{
+  "id": "verse-1-body",
+  "name": "Verse 1 body",
+  "bars": 12,
+  "active_pattern_ids": ["pattern-rhythm-a"]
+}
+```
+
+All active patterns sound simultaneously for the whole block. Split an ending,
+fill, or pattern change into a following block. An empty block declares
+`empty_policy: "rest"` or `"live"`.
+
+## Finalization inputs
+
+`resolutions.json` may be a decision list or an object containing `decisions`,
+`section_actions`, `layer_omissions`, and `variant_selections`.
+
+`performance.json` contains publication status/limitations/consent, optional
+reviewed `tail_policy`, generic roles and `section_transitions`:
+
+```json
+{
+  "status": "final",
+  "limitations": [],
   "performance": {
-    "players": 2,
-    "roles": ["Player 1 performs the live lead"],
-    "transitions": ["Use one prepared state change at the chorus"]
+    "players": 1,
+    "roles": ["Player performs rhythm guitar"],
+    "section_transitions": [{
+      "section_id": "verse-1-body",
+      "action": "Launch the prepared verse state on beat 1.",
+      "feasible": true
+    }]
   }
 }
 ```
 
-The fragment is illustrative; merge these objects into the complete handoff.
-`status` is `final` with an empty limitations array and no consent field, or
-`partial` with nonempty limitations and consent. Performance descriptions use
-generic capabilities/actions only. The exporter accepts a missing `publication`
-object as a backward-compatible complete Final handoff, but new finalizations
-must write explicit publication metadata to the performance handoff.
+Use `warning` when `feasible` is false. Finalization requires actions for retained
+sections only.
+
+## Source-copy export slice
+
+Modern ZIP `.gp`/GPIF may authorize `source_bar_reuse`. LOOP material supports one
+track/staff/voice and contiguous 1/2/4/8 bars. Exact LIVE/UNRESOLVED one-offs may
+span 1-64 bars. Source meter/tempo must match the constant plan, boundaries cannot
+depend on outside ties/grace timing, and unsupported effects remain explicit.
+
+The writer resolves the exact retained source refs, checks fingerprints and declared
+lengths, copies supported notation, prunes note-empty output tracks, and round-trips
+the result. It never reconstructs retained source material from ASCII grids or
+silently converts an invalid reference to a cue.
+
+## Commands
+
+```text
+node skills\vp-music\tools\analysis_preflight.mjs --manifest <arrangement.json> --song-dir <song>
+python skills\vp-music\tools\render_views.py --manifest <arrangement.json> --song-dir <song>
+python skills\vp-music\tools\compile_performance.py --manifest <arrangement.json> --resolutions <resolutions.json> --performance <performance.json> --output <performance-arrangement.json>
+python skills\vp-music\tools\finalize_build.py --song-dir <song> --analysis <arrangement.json> --resolutions <resolutions.json> --performance <performance.json> --title "Artist - Song"
+```

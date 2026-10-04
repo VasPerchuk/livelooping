@@ -1,0 +1,49 @@
+{
+  "skill_name": "vp-music-analyze",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Analyze a steady 16-bar rhythm part whose one-bar cell repeats throughout, but whose musical phrase is four bars.",
+      "expected_output": "Select the coherent four-bar phrase ahead of the embedded one-bar fragment, unless the one-bar cell has a separately documented live-loop purpose.",
+      "files": [],
+      "expectations": [
+        "Equivalent coverage favors the coherent four- or eight-bar phrase.",
+        "At most three core patterns are selected for the source instrument by default.",
+        "A short exception includes a concrete musical selection_reason."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Two eight-bar background-guitar passages each contain seven silent bars, but their only sounding final bars are different. Decide whether this is one near-loop.",
+      "expected_output": "Do not classify the passages as a near-loop merely because their rests align; record the different sounding material as distinct or live/unresolved evidence.",
+      "files": [],
+      "expectations": [
+        "Shared silence alone never establishes a near-loop.",
+        "The different sounding bars remain explicit.",
+        "No canonical loop decision is invented from silence-only similarity."
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "A 14-bar bridge contains a 12-bar repeating body and a distinct two-bar ending on the same source guitar track. Build the ordered analysis sections.",
+      "expected_output": "Represent a 12-bar bridge-body sub-block followed by a two-bar bridge-ending sub-block. Do not activate body and ending loops simultaneously for all 14 bars and do not use a tail policy to move the ending.",
+      "files": [],
+      "expectations": [
+        "active_pattern_ids are treated as simultaneous for a whole block.",
+        "The two-bar ending starts only after the 12-bar body.",
+        "Total bridge length remains exactly 14 bars."
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "A source has six tracks, but one is live-only, one is omitted optional doubling, and no material remains unresolved. Prepare a finalization-ready handoff.",
+      "expected_output": "Keep all source tracks in the evidence manifest, but expect executable output lanes only for placed loops and the used live role. Do not create empty unresolved or omitted-only output tracks.",
+      "files": [],
+      "expectations": [
+        "Source-track provenance is preserved.",
+        "No unused output role is counted toward export capacity.",
+        "The analysis preflight reports selected-loop and section-timing readiness honestly."
+      ]
+    }
+  ]
+}

@@ -29,7 +29,7 @@
       "expected_output": "Accurate compound-meter timing, three named instrumental patterns, chord voicings with tuning/capo qualification, no full internet lyrics, and a concise root final worksheet with explicit section transitions.",
       "files": [],
       "expectations": [
-        "The 6/8 timing treats dotted-quarter 80 BPM as two beats per bar; unsupported GP v1 timing is reported as a GP blocker without discarding the supported worksheet.",
+        "The 6/8 timing treats dotted-quarter 80 BPM as two beats per bar; unsupported Guitar Pro 1 source timing is reported as a GP blocker without discarding the supported worksheet.",
         "The final worksheet references exactly three named instrumental patterns.",
         "Unlicensed website lyrics are not reproduced.",
         "Every final section has a short feasible Transition line or an INFEASIBLE cue and a conspicuous warning."
@@ -68,12 +68,12 @@
     },
     {
       "id": 7,
-      "prompt": "Finalize the supported worksheet for my legacy song. Its old pattern Markdown is intentionally abbreviated and contains no scored arrangement.json, and I didn't approve a new analysis pass.",
-      "expected_output": "Finalization asks the opening questionnaires and explains that ASCII patterns do not contain complete score events. It offers more details/reanalysis, pause, or informed Partial results only if a structurally valid available reduction exists.",
+      "prompt": "Finalize the supported worksheet for my old song. Its historical pattern Markdown is intentionally abbreviated and contains no scored arrangement.json, and I didn't approve a new analysis pass.",
+      "expected_output": "Finalization explains that ASCII patterns do not contain complete score events and the current pipeline requires an approved version 2 analysis. It offers reanalysis or pause and leaves historical files untouched.",
       "files": [],
       "expectations": [
         "No fabricated Guitar Pro notes are created and exporter constraints are not bypassed by Partial consent.",
-        "Legacy files are not migrated and reanalysis requires a fresh finalization approval."
+        "Historical files are not migrated and reanalysis requires fresh approval."
       ]
     },
     {
@@ -118,6 +118,39 @@
         "Partial consent does not coerce unsupported tempo changes, ties or cross-bar notes into the current schema.",
         "No malformed or falsely successful arrangement.gp is published.",
         "Any proposed simplification is explicitly approved and labeled as an original arrangement decision."
+      ]
+    },
+    {
+      "id": 12,
+      "prompt": "I hand-edited the approved arrangement.json after you already compiled a performance plan from it last week. Now finalize and publish a Final worksheet and arrangement.gp.",
+      "expected_output": "Finalization detects that the compiled performance plan's recorded fingerprints no longer match the edited analysis file and refuses to publish from the stale plan; it asks for an explicit recompile with the current resolutions before any public artifact is written, rather than silently trusting progress notes or the old plan.",
+      "files": [],
+      "expectations": [
+        "A fingerprint mismatch between the current arrangement.json and the compiled plan is reported as a blocker, not silently bypassed.",
+        "No worksheet.md or arrangement.gp is published from the outdated compiled plan.",
+        "Recompiling requires the same resolutions questionnaire to be reconfirmed, not an automatic silent recompute."
+      ]
+    },
+    {
+      "id": 13,
+      "prompt": "Approve finalization of a song where one guitar loop is still UNRESOLVED with no decision recorded. Ask for a Final publish directly.",
+      "expected_output": "Finalization's conflict/gap questionnaire surfaces the unresolved pattern first; if the user tries to force a Final publish without resolving it, the workflow explains that a Final can never contain a surviving UNRESOLVED pattern and offers the standard insufficiency choices (accept labeled Partial, provide details and rerun analysis/finalization, or pause) instead of producing a false Final.",
+      "files": [],
+      "expectations": [
+        "An unresolved decision blocks any Final publication rather than being silently treated as resolved.",
+        "The three standard insufficiency options are offered with no invented fourth option.",
+        "Choosing to rerun analysis requires fresh finalization approval afterward rather than resuming the old approval."
+      ]
+    },
+    {
+      "id": 14,
+      "prompt": "Prepare this song from the supplied legacy GP5, but I ultimately need exact notation in a modern arrangement.gp. If conversion becomes necessary, ask early rather than waiting until final export.",
+      "expected_output": "Research validates the GP5 for evidence and requests a modern ZIP-based .gp conversion before analysis approval when exact source reuse is required. Analysis runs source export preflight on each selected loop, occurrence variant and exact LIVE span before offering finalization, reporting cue-only LIVE material separately from hard blockers.",
+      "files": [],
+      "expectations": [
+        "Legacy GP remains usable for research/analysis evidence but is not represented as modern source-copy capable.",
+        "The modern .gp request occurs before analysis/finalization work that depends on exact export.",
+        "Analysis approval is withheld when selected loops or preserve_variants choices fail exact source preflight; cue-only LIVE spans are disclosed distinctly."
       ]
     }
   ]

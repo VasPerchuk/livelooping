@@ -9,6 +9,8 @@
 **Source bars:** <file measures>   **Loop length:** <N> bars
 **Meter:** <n/d>   **Confidence:** <confirmed/likely/estimated>
 **Used in:** <section names from draft worksheet>
+**Match tier / disposition:** <exact|normalized|near> / <LOOP|LIVE|OPTIONAL|UNRESOLVED|REST>
+**Role evidence:** <name/MIDI/channel hint, pitch range, repetition density — role is a prior, not an exclusion>
 
 ```text
 Count |1 & 2 & 3 & 4 &|

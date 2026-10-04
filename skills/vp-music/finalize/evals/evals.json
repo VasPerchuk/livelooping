@@ -1,0 +1,137 @@
+{
+  "skill_name": "vp-music-finalize",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Finalize a version 2 analysis whose chorus guitar loop has two source-backed per-occurrence variants and whose bridge loop has only the canonical source. I approve preserve_variants for the chorus occurrences and use_canonical for the bridge.",
+      "expected_output": "compile_performance.py writes a variant_selections entry for each chorus occurrence that references one of the pattern's own predeclared per-occurrence variant ids, and a plain placement for the bridge whose notes come directly from its own source_ref. The built arrangement.gp shows genuinely distinct notes at each chorus occurrence rather than one repeated canonical loop or an invented transform.",
+      "files": [],
+      "expectations": [
+        "A preserve_variants resolution selects one of the pattern's own declared variants per occurrence, never a fabricated transform or an unrelated source reference.",
+        "An unavailable variant id, or a source_ref that disagrees with the pattern's declared spans, is a hard build error rather than a silent substitution.",
+        "The use_canonical bridge placement's notes come from its own source_ref unchanged."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Finalize a song where the keys part has no reliable notation and is confirmed live-only for the whole song. Compile the performance plan and export the arrangement.",
+      "expected_output": "The compiled plan still authors the logical live output track and placements for keys. Because no reliable notation exists, the worksheet identifies the exact LIVE bars and what remains to be played, while readable-layout export removes the note-empty physical GP track instead of showing blank cue bars.",
+      "files": [],
+      "expectations": [
+        "The plan declares only output roles that receive placements; it does not add empty loop or unresolved placeholders.",
+        "A live-only instrument remains explicit in the output_timeline and worksheet, while its note-empty physical GP track is pruned.",
+        "No fabricated keys notes are invented to fill the live track."
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Finalize a song whose source is a GPX file (no source_bar_reuse capability) and whose loop pattern was flagged UNRESOLVED and resolved to use a reduced original transcription. Build the arrangement.gp.",
+      "expected_output": "Because the source cannot support bar-level reuse, the writer never attempts a numeric reconstruction as a silent fallback; it either builds from the explicitly approved original note events or, if those are unrepresentable, emits the documented labeled cue and reports the exact unsupported-source blocker instead of claiming full success.",
+      "files": [],
+      "expectations": [
+        "Source-copy capability is never assumed when source.capabilities omits source_bar_reuse; GPX stays out of scope for source-copy export.",
+        "The writer reports the specific blocker or labeled cue rather than silently downgrading to best-effort output.",
+        "No source notes are copied from an unsupported format."
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Two OPTIONAL sections exist in the analysis. For the first, I want to keep it in the performance. For the second, I approve deleting it, and the deletion creates a new adjacency between two retained sections.",
+      "expected_output": "The retained OPTIONAL section appears in output_timeline with a visible [OPTIONAL] marker in both the compiled plan and the published worksheet's Retained Optional Material section. The deleted section is recorded in removal_ledger and only listed under Omissions and Edits, and because the deletion creates a new adjacency, finalization records an explicit transition reason for it before a final publication is allowed to compile.",
+      "files": [],
+      "expectations": [
+        "A section_instances delete action requires approved: true and is never silently inferred from OPTIONAL alone.",
+        "A deletion creating a new adjacency without a recorded transition reason blocks a final publication and is flagged REVIEW REQUIRED only under a consented partial.",
+        "OPTIONAL remains a disposition, never a physical output-track role."
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "A bridge pattern remains UNRESOLVED after an explicit defer_unresolved resolution. Build an internal draft preview first, then come back and build a consented Partial with the bridge gap disclosed.",
+      "expected_output": "The draft build writes only an isolated preview under .vp-music-tracking\\preview\\<generation>\\ and never touches the public root or the tracking performance-arrangement.json. The later Partial build publishes worksheet.md and arrangement.gp with the bridge gap named in Limitations and recorded consent; the worksheet retains the actionable UNRESOLVED cue while a note-empty unresolved GP track is removed.",
+      "files": [],
+      "expectations": [
+        "A pattern can remain UNRESOLVED in a draft or partial compiled plan only via an explicit defer_unresolved resolution, never by omission.",
+        "A draft publication never writes a public worksheet, GP file or bundle record.",
+        "The Partial worksheet and score metadata disclose the same bridge limitation; the worksheet carries the actionable UNRESOLVED cue and the note-empty GP role track is absent."
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "The same bridge pattern is still UNRESOLVED with no defer_unresolved resolution. Try to compile and publish a Final.",
+      "expected_output": "compile_performance.py rejects the final publication outright because an UNRESOLVED pattern would survive into it; no worksheet.md, arrangement.gp or bundle record is written, and the exact blocking pattern is reported.",
+      "files": [],
+      "expectations": [
+        "A final publication can never contain a surviving UNRESOLVED pattern.",
+        "The rejection happens before any public file is written, not after a partially successful build.",
+        "The reported error names the specific unresolved pattern/decision rather than a generic failure."
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "A performance-arrangement.json was compiled earlier, but the underlying arrangement.json was hand-edited afterward. Run finalize_build.py again with the original --analysis and --resolutions files.",
+      "expected_output": "finalize_build.py and write_arrangement.mjs recompute the canonical SHA-256 fingerprints of the analysis manifest and resolutions and detect that they disagree with the compiled plan's own fingerprints block, refusing to build from the stale compiled plan and asking for an explicit recompile instead.",
+      "files": [],
+      "expectations": [
+        "Fingerprint mismatch is detected and reported before any file is published.",
+        "No arrangement.gp or worksheet.md is built from a plan whose source analysis has since changed.",
+        "The fix is an explicit recompile_performance.py rerun, never a silent reinterpretation."
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "Run finalize_build.py for a final publish, but the GP export step fails partway through (simulated interruption). Run finalize_build.py again afterward.",
+      "expected_output": "The interrupted run leaves a journal.json and per-file backups under the staging directory; the next finalize_build.py invocation (or --recover-only) detects the leftover journal and rolls every touched file back to its pre-transaction bytes, leaving the previously published bundle (or no bundle, if this was the first publish) intact with no leaked staging state.",
+      "files": [],
+      "expectations": [
+        "Publication files are replaced in the fixed order performance-arrangement -> worksheet -> arrangement.gp -> bundle record, with the bundle record written last.",
+        "Rollback restores only the files named in the journal and never touches unrelated song files.",
+        "A successful recovery run deletes its own journal, backups and staging directory afterward."
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "Two separate analysis tracks are both named 'Guitar' with different instrument ids. Compile and export the arrangement.",
+      "expected_output": "The compiled plan keeps both instruments' output tracks distinct by output_track.id. Because the display name is ambiguous, write_arrangement.mjs names the exported GP tracks '<name> [<instrumentId>] (<role>)' for both instruments instead of two identically named tracks.",
+      "files": [],
+      "expectations": [
+        "Duplicate display names are legal and never silently merged or renamed without disambiguation.",
+        "GP track disambiguation triggers only when a name collision actually exists; an unambiguous instrument's track name is unchanged.",
+        "Track identity used for placements and checks is always output_track.id, never the exported GP track name."
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "A 3-bar loop pattern is placed into a 10-bar section, so it cannot repeat for a whole number of cycles without a remainder. Resolve how the tail bars are handled.",
+      "expected_output": "Finalization does not silently choose a global tail_policy. It routes the timing mismatch back to analysis so the form can be represented as ordered full-cycle sub-blocks where evidence supports that, or asks for a scoped reviewed_truncate/reviewed_wrap_full_cycles_only/reviewed_no_partial_cycle decision if an incomplete cycle is genuinely intended.",
+      "files": [],
+      "expectations": [
+        "The workflow first prefers correct ordered sub-blocks and complete cycles over a tail policy.",
+        "No v2 placement silently truncates or wraps a partial loop cycle without a recorded reviewed decision.",
+        "Any genuinely necessary chosen policy is scoped, confirmed and reflected consistently in both the compiled plan and exported score."
+      ]
+    },
+    {
+      "id": 11,
+      "prompt": "Finalize a source-backed arrangement with drums, bass, two core guitar loops, one retained optional guitar layer, and one source-backed unresolved rehearsal layer. Preserve the original instruments and make the Guitar Pro view easy to read.",
+      "expected_output": "The exporter preserves each source part's playback program/bank, percussion identity, tuning/capo and notation type while assigning safe output channels. It removes every note-empty track, globally orders notated tracks core then optional-only then unresolved, and colors drums blue, bass yellow and all other/unknown parts red.",
+      "files": [],
+      "expectations": [
+        "Reload verification confirms source playback identity, percussion semantics, tuning/capo and notation type rather than relying only on pre-export values.",
+        "The physical GP track order is globally core, optional-only, unresolved; mixed core/optional tracks remain core.",
+        "Track colors are exactly drums #0000FF, bass #FFFF00 and other/unknown #FF0000, and zero-note tracks are absent."
+      ]
+    },
+    {
+      "id": 12,
+      "prompt": "Resume finalizing a song folder whose progress prose says Final, but the bundle checksum is stale and arrangement.gp was edited after publication. Do not trust the prose or overwrite anything.",
+      "expected_output": "phase_status.py inventories files and hashes, detects bundle drift, reports a conflict and does not claim verified finalization. It preserves all files, requires explicit recovery or replacement, and any later successful publish records the exact exported logical track ids, GP names and order in the bundle export projection.",
+      "files": [],
+      "expectations": [
+        "Resume status comes from disk hashes and bundle verification, not prose.",
+        "A stale bundle is reported as a conflict without overwriting song artifacts.",
+        "The publication bundle records and verifies exact exported output-track ids, GP names and order."
+      ]
+    }
+  ]
+}

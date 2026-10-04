@@ -30,11 +30,23 @@ try {
     const length = Number.isFinite(next) && next > start ? next - start : nominal;
     check(Number.isFinite(start) && start >= 0 && length > 0 && length <= 64,
       'invalid GPX bar length');
+    const alternateEndings = [];
+    for (let pass = 1; pass <= 8; pass++) {
+      if (master.alternateEndings & (1 << (pass - 1))) alternateEndings.push(pass);
+    }
+    const directions = master.directions
+      ? [...master.directions].map(d => alphaTab.model.Direction[d])
+      : [];
     bars.push({
       number: bars.length + 1, start_quarters: start,
       length_quarters: length, meter: `${numerator}/${denominator}`,
       repeat_open: !!master.isRepeatStart,
-      repeat_close: master.repeatCount > 0 ? master.repeatCount : null
+      repeat_close: master.repeatCount > 0 ? master.repeatCount : null,
+      repeat_close_total_passes: master.repeatCount > 0 ? master.repeatCount : null,
+      alternate_endings: alternateEndings,
+      directions,
+      anacrusis: !!master.isAnacrusis,
+      anacrusis_actual_length_quarters: master.isAnacrusis ? length : null
     });
     for (const automation of master.tempoAutomations) {
       const ratio = automation.ratioPosition;
@@ -97,8 +109,25 @@ try {
         }
       }
     }
-    tracks.push({name: String(track.name || `Track ${tracks.length + 1}`).slice(0, 200),
-      staves, notes});
+    const playback = track.playbackInfo;
+    tracks.push({
+      name: String(track.name || `Track ${tracks.length + 1}`).slice(0, 200),
+      playback: {
+        program: Number.isInteger(playback?.program) && playback.program >= 0 &&
+          playback.program <= 127 ? playback.program : null,
+        bank: Number.isInteger(playback?.bank) && playback.bank >= 0 &&
+          playback.bank <= 16383 ? playback.bank : null,
+        primary_channel: Number.isInteger(playback?.primaryChannel) &&
+          playback.primaryChannel >= 0 && playback.primaryChannel <= 15
+          ? playback.primaryChannel : null,
+        secondary_channel: Number.isInteger(playback?.secondaryChannel) &&
+          playback.secondaryChannel >= 0 && playback.secondaryChannel <= 15
+          ? playback.secondaryChannel : null
+      },
+      source_color: typeof track.color?.rgba === 'string' ? track.color.rgba : null,
+      staves,
+      notes
+    });
   }
   process.stdout.write(JSON.stringify({tracks, bars, tempos}));
 } catch (error) {

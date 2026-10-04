@@ -1,5 +1,13 @@
 # Livelooping song-preparation workflow
 
+New scored preparations distinguish readable sources, usable notation evidence and
+modern-GP export readiness. Use `tools\analysis_preflight.mjs` before analysis
+approval and `tools\phase_status.py` when resuming or reporting completion. New
+performance plans produce decluttered GP scores with source instrument identity,
+used-only logical lanes plus note-empty GP-track pruning,
+core/optional/unresolved ordering and a
+drums-blue/bass-yellow/other-red palette.
+
 The canonical, host-independent role and skill instructions live in this folder.
 `CONTRACT.md` defines artifacts and human approval gates. `roles\` contains the
 four agents; `research\`, `analyze\`, `finalize\`, `performance-worksheet\`,
@@ -61,9 +69,8 @@ copied wholesale.
 
 ## Copilot CLI activation
 
-Project discovery is documented for repository `.github` directories. Although
-this folder is not currently a Git repository, `copilot skill list` run from
-here has shown the project skills. If an agent/skill does not show
+Project discovery uses the repository's `.github` directories. If an agent/skill
+does not show
 up in your session, explicitly trust the folder from the `livelooping` root
 with `copilot --add-dir .` (the local CLI's `--help` says this loads its
 `.github\agents` and `.github\skills`). Confirm discovery with `/agent` and
@@ -115,21 +122,43 @@ files use `tools\music_assets.py validate --path <file>` or `inspect` with the
 same `--path` option; `duration` emits bar seconds.
 `scripts\pattern_candidates.py --path <file>` proposes exact repeated phrases
 for the analyzer to review, rather than asserting sections automatically.
-`scripts\check_worksheet.py --song-dir <folder>` checks a tracking draft
-(or legacy root draft); add `--require-final` to check the published root
-worksheet, including per-section transition lines in the new layout. It also
-checks pattern references and steady-tempo durations. Read `--help` for
-details. `analyze\references\midi-pitches.md` documents provisional MIDI
+`scripts\check_worksheet.py --song-dir <folder> --plan
+<performance-arrangement.json>` checks a generated published worksheet against
+the compiled `plan_version: 2` performance plan itself
+(status/publication, section order/ids/bar ranges/counts/times, active track
+ids, optional/unresolved/deleted disclosures, limitations/consent
+visibility, transitions). Use `--verify-bundle` instead to verify a published
+bundle. `analyze\references\midi-pitches.md` documents provisional MIDI
 instrument/drum identification. `tools\write_arrangement.mjs` exports a matching Final or explicitly approved
 Partial reduction only after checking its event/section handoff, publication
-metadata and worksheet and refusing overwrite. Existing examples include
+metadata and worksheet and refusing overwrite; a version 2 build additionally
+accepts an optional `--worksheet <worksheet.md>` flag to cross-check the
+built GP file against both the compiled plan and that published worksheet in
+the same step. Existing examples include
 GP3/4/5, GPX, ZIP-based modern GP and MIDI; the validator fails explicitly on
 unsupported formats. It does not determine whether a transcription matches the
 recording.
+
+`tools\finalize_build.py --song-dir <folder> --analysis <arrangement.json>
+--resolutions <resolutions.json> --performance <performance.json>`
+coordinates compiling, rendering, exporting and publishing a version 2 plan
+as one command instead of invoking `compile_performance.py`/
+`render_views.py`/`write_arrangement.mjs`/`check_worksheet.py` by hand. It
+publishes root `worksheet.md`, root `arrangement.gp`, the tracking
+`performance-arrangement.json` and a `.vp-music-tracking\publish\bundle.json`
+record together as one journaled, no-clobber transaction (ordered
+replacement with per-file backups, bundle record written last, rollback on
+failure — honestly recoverable, not true multi-file filesystem atomicity);
+`--replace` is required to republish over an existing bundle, and `--draft`
+builds an isolated preview under `.vp-music-tracking\preview\<generation>\`
+that never touches public outputs. Verify a published bundle with
+`--verify` or `scripts\check_worksheet.py --song-dir <folder>
+--verify-bundle`.
 
 Install parser dependencies only if missing: `python -m pip install -r
 skills\vp-music\tools\requirements.txt` for legacy GP3/4/5, and run `npm ci`
 inside `skills\vp-music\tools` for GPX (Node.js required). MIDI and modern
 ZIP-based GP inspection use Python's standard library. Guitar Pro string
 numbering differs by format; use the reported `tablature.string_numbering`
-and staff tuning before writing a tab.
+and staff tuning when reviewing generated grids. Historical output layouts are
+left untouched and are not automatically migrated.

@@ -13,6 +13,8 @@ import sys
 import xml.etree.ElementTree as ET
 import zipfile
 
+from performed_order import expand_performed_order
+
 MAX_FILE = 16 * 1024 * 1024
 MAX_XML = 8 * 1024 * 1024
 MAX_ENTRIES = 128
@@ -224,6 +226,33 @@ def _midi(data):
                           for p, b in sorted(tempos)], missing
 
 
+def _beat_quarters(duration):
+    """Quarter-note length of a single PyGuitarPro beat duration object."""
+    quarter = Fraction(4, duration.value)
+    if duration.isDotted:
+        quarter *= Fraction(3, 2)
+    quarter *= Fraction(duration.tuplet.times, duration.tuplet.enters)
+    return quarter
+
+
+# PyGuitarPro's gp3/gp5 reader normalizes the GP5-only direction/fromDirection
+# marker text (see guitarpro/gp5.py readDirections) to these exact English
+# labels; map them to the same canonical names GPIF uses
+# (<Directions><Target>/<Jump>...) so both formats share one vocabulary.
+LEGACY_DIRECTION_NAMES = {
+    "Coda": "TargetCoda", "Double Coda": "TargetDoubleCoda", "Segno": "TargetSegno",
+    "Segno Segno": "TargetSegnoSegno", "Fine": "TargetFine",
+    "Da Capo": "JumpDaCapo", "Da Capo al Coda": "JumpDaCapoAlCoda",
+    "Da Capo al Double Coda": "JumpDaCapoAlDoubleCoda", "Da Capo al Fine": "JumpDaCapoAlFine",
+    "Da Segno": "JumpDalSegno", "Da Segno al Coda": "JumpDalSegnoAlCoda",
+    "Da Segno al Double Coda": "JumpDalSegnoAlDoubleCoda", "Da Segno al Fine": "JumpDalSegnoAlFine",
+    "Da Segno Segno": "JumpDalSegnoSegno", "Da Segno Segno al Coda": "JumpDalSegnoSegnoAlCoda",
+    "Da Segno Segno al Double Coda": "JumpDalSegnoSegnoAlDoubleCoda",
+    "Da Segno Segno al Fine": "JumpDalSegnoSegnoAlFine",
+    "Da Coda": "JumpDaCoda", "Da Double Coda": "JumpDaDoubleCoda",
+}
+
+
 def _legacy(data):
     try:
         import guitarpro
@@ -242,12 +271,40 @@ def _legacy(data):
             start = Fraction(header.start - song.measureHeaders[0].start, 960)
             meter = header.timeSignature
             length = Fraction(4 * meter.numerator, meter.denominator.value)
+            # guitarpro normalizes repeatClose to "extra repeats after the
+            # first playthrough" uniformly across gp3/gp4/gp5 (gp5.py
+            # subtracts 1 from the raw, already-total byte read from file;
+            # gp3/gp4 store that same "extra repeats" meaning directly), so
+            # the normalized TOTAL pass count is always repeatClose + 1.
+            total_passes = header.repeatClose + 1 if header.repeatClose >= 0 else None
+            alternate_endings = [i + 1 for i in range(8) if header.repeatAlternative & (1 << i)]
+            directions = sorted(filter(None, (
+                LEGACY_DIRECTION_NAMES.get(header.direction.name) if header.direction else None,
+                LEGACY_DIRECTION_NAMES.get(header.fromDirection.name) if header.fromDirection else None,
+            )))
             bars.append({"number": header.number, "start_quarters": float(start),
                          "length_quarters": float(length),
                          "meter": f"{meter.numerator}/{meter.denominator.value}",
                          "repeat_open": header.isRepeatOpen,
                          "repeat_close": header.repeatClose if header.repeatClose > 0 else None,
-                         "repeat_alternative": header.repeatAlternative or None})
+                         "repeat_alternative": header.repeatAlternative or None,
+                         "repeat_close_total_passes": total_passes,
+                         "alternate_endings": alternate_endings,
+                         "directions": directions,
+                         "anacrusis": False, "anacrusis_actual_length_quarters": None})
+        # Legacy GP has no explicit anacrusis flag (unlike GPIF's
+        # <MasterTrack><Anacrusis/>); infer a pickup first bar from any
+        # track whose first measure's written content is shorter than its
+        # nominal meter length.
+        if bars and song.tracks and song.tracks[0].measures:
+            first_measure = song.tracks[0].measures[0]
+            actual = sum((_beat_quarters(beat.duration)
+                         for voice in first_measure.voices for beat in voice.beats),
+                        Fraction(0))
+            nominal = Fraction(str(bars[0]["length_quarters"]))
+            if 0 < actual < nominal:
+                bars[0]["anacrusis"] = True
+                bars[0]["anacrusis_actual_length_quarters"] = float(actual)
         tracks = []
         visited = 0
         for track in song.tracks:
@@ -261,11 +318,7 @@ def _legacy(data):
                         change = beat.effect.mixTableChange
                         if change and change.tempo and change.tempo.value > 0:
                             tempos.append((pos, change.tempo.value))
-                        duration = beat.duration
-                        quarter = Fraction(4, duration.value)
-                        if duration.isDotted:
-                            quarter *= Fraction(3, 2)
-                        quarter *= Fraction(duration.tuplet.times, duration.tuplet.enters)
+                        quarter = _beat_quarters(beat.duration)
                         for note in beat.notes:
                             pitch = (track.strings[note.string - 1].value + note.value
                                      if 1 <= note.string <= len(track.strings) else None)
@@ -404,6 +457,9 @@ def _gpif(root):
                 tempo_by_bar[bar] = bpm
             else:
                 missing.append("non-barline or unrecognized GPIF tempo automation")
+    # <MasterTrack><Anacrusis/> (if present) always marks only the very
+    # first master bar as a pickup, per alphaTab's GPIF importer.
+    has_anacrusis = root.find("./MasterTrack/Anacrusis") is not None
     bars, tempos, cursor = [], [], Fraction(0)
     for i, master in enumerate(masters):
         match = re.fullmatch(r"(\d+)/(\d+)", master.findtext("Time") or "")
@@ -416,15 +472,27 @@ def _gpif(root):
         repeat = master.find("Repeat")
         repeat_open = (repeat.get("start", "").lower() == "true" or
                        repeat.find("Start") is not None) if repeat is not None else False
+        # GPIF's Repeat@count is already the normalized TOTAL pass count
+        # (alphaTab's GpifParser reads it directly into `repeatCount` with
+        # no adjustment), unlike legacy GP's repeatClose.
         repeat_close = (_number(repeat.get("count")) or _number(repeat.findtext("Count"))
                         if repeat is not None and
                         (repeat.get("end", "").lower() == "true" or
                          repeat.find("End") is not None) else None)
+        endings_text = master.findtext("AlternateEndings")
+        alternate_endings = sorted({n for n in (_number(t) for t in (endings_text or "").split())
+                                    if n is not None and 1 <= n <= 8})
+        directions = sorted(
+            f"{child.tag}{(child.text or '').strip()}"
+            for child in master.findall("./Directions/*")
+            if child.tag in ("Target", "Jump") and (child.text or "").strip())
         bars.append({"number": i + 1, "start_quarters": float(cursor),
                      "length_quarters": float(length), "meter": f"{num}/{den}",
-                     "repeat_open": repeat_open, "repeat_close": repeat_close})
-        if master.find("AlternateEndings") is not None:
-            missing.append("GPIF alternate repeat endings")
+                     "repeat_open": repeat_open, "repeat_close": repeat_close,
+                     "repeat_close_total_passes": repeat_close,
+                     "alternate_endings": alternate_endings, "directions": directions,
+                     "anacrusis": i == 0 and has_anacrusis,
+                     "anacrusis_actual_length_quarters": float(length) if i == 0 and has_anacrusis else None})
         cursor += length
     if not tempos or tempos[0][0] != 0:
         missing.append("initial tempo")
@@ -437,6 +505,20 @@ def _gpif(root):
                       "64th": Fraction(1, 16)}
     tracks = []
     for i, item in enumerate(tracks_xml):
+        color_parts = [_number(p) for p in (item.findtext("Color") or "").split()]
+        source_color = (f"#{color_parts[0]:02X}{color_parts[1]:02X}{color_parts[2]:02X}"
+                        if len(color_parts) >= 3 and
+                        all(isinstance(n, int) and 0 <= n <= 255 for n in color_parts[:3])
+                        else None)
+        midi = item.find("./Sounds/Sound/MIDI")
+        program = _number(midi.findtext("Program")) if midi is not None else None
+        lsb = _number(midi.findtext("LSB")) if midi is not None else None
+        msb = _number(midi.findtext("MSB")) if midi is not None else None
+        connection = item.find("MidiConnection")
+        primary = _number(connection.findtext("PrimaryChannel")) if connection is not None else None
+        secondary = _number(connection.findtext("SecondaryChannel")) if connection is not None else None
+        instrument_type = (item.findtext("./InstrumentSet/Type") or "").lower()
+        percussion = instrument_type in ("drums", "percussion")
         staves = []
         for j, staff in enumerate(item.findall("./Staves/Staff")):
             pitches = staff.findtext('./Properties/Property[@name="Tuning"]/Pitches')
@@ -446,8 +528,17 @@ def _gpif(root):
                       any(numbers) else None)
             capo = _number(staff.findtext('./Properties/Property[@name="CapoFret"]/Fret'))
             staves.append({"number": j + 1, "tuning_midi": tuning,
-                           "capo_fret": capo if capo is not None and 0 <= capo <= 36 else None})
+                           "capo_fret": capo if capo is not None and 0 <= capo <= 36 else None,
+                           "percussion": percussion})
         tracks.append({"name": item.findtext("Name") or f"Track {i + 1}",
+                       "playback": {
+                           "program": program,
+                           "bank": (msb * 128 + lsb if isinstance(msb, int) and
+                                    isinstance(lsb, int) else None),
+                           "primary_channel": primary,
+                           "secondary_channel": secondary,
+                       },
+                       "source_color": source_color,
                        "staves": staves, "notes": []})
     visited = 0
     for bar_index, master in enumerate(masters):
@@ -565,7 +656,7 @@ def inspect(path, include_notes=True, require_notes=False):
     path = Path(path).resolve()
     result = {"source": str(path), "format": None, "status": "invalid",
               "confidence": "none", "missing_fields": [], "error": None,
-              "checksum_sha256": None, "metadata": None}
+              "checksum_sha256": None, "metadata": None, "performed_order": None}
     try:
         _require(path.is_file(), "not a regular file")
         _require(path.stat().st_size <= MAX_FILE, "file exceeds 16 MiB limit")
@@ -597,9 +688,19 @@ def inspect(path, include_notes=True, require_notes=False):
         note_count = sum(len(t["notes"]) for t in tracks)
         if note_count == 0:
             missing.append("note content (0 notes)")
+        performed_order = expand_performed_order([
+            {"number": bar["number"], "repeat_open": bar.get("repeat_open", False),
+             "repeat_close_total_passes": bar.get("repeat_close_total_passes"),
+             "alternate_endings": bar.get("alternate_endings") or [],
+             "directions": bar.get("directions") or []}
+            for bar in bars])
+        if performed_order["status"] != "ok":
+            missing.append("performed order not expanded: " +
+                           "; ".join(performed_order["diagnostics"]))
         result.update(status="valid", confidence="parsed" if not missing else "partial",
                       missing_fields=missing, tracks=tracks, bars=bars, tempos=tempos,
                       track_count=len(tracks), bar_count=len(bars),
+                      performed_order=performed_order,
                       metadata={"size_bytes": len(data), "track_count": len(tracks),
                                 "bar_count": len(bars),
                                 "note_count": note_count,
