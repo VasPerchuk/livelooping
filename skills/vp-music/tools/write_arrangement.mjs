@@ -263,7 +263,7 @@ function parsePatternV2(pattern, where, trackSpanIds, trackIdsByName) {
       `${where}.confidence: expected confirmed|likely|estimated|unknown`);
   }
   if (pattern.selection_reason !== undefined) {
-    text(pattern.selection_reason, `${where}.selection_reason`, 500);
+    metadata(pattern.selection_reason, `${where}.selection_reason`, 500);
   }
   if (pattern.decision_ids !== undefined) {
     insist(Array.isArray(pattern.decision_ids) && pattern.decision_ids.length > 0,
@@ -536,7 +536,7 @@ function parseResolvedPatternV2(pattern, where, trackSpanIds, trackIdsByName) {
       `${where}.confidence: expected confirmed|likely|estimated|unknown`);
   }
   if (pattern.selection_reason !== undefined) {
-    text(pattern.selection_reason, `${where}.selection_reason`, 500);
+    metadata(pattern.selection_reason, `${where}.selection_reason`, 500);
   }
   if (pattern.decision_ids !== undefined) {
     insist(Array.isArray(pattern.decision_ids) && pattern.decision_ids.length > 0,
